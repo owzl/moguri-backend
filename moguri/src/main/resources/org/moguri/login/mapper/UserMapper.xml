@@ -1,0 +1,15 @@
+<mapper namespace="com.example.project.login.repository.UserMapper">
+
+    <!-- 사용자 이름으로 사용자 조회 -->
+    <select id="findByUsername" parameterType="String" resultType="com.example.project.login.domain.User">
+        SELECT * FROM users WHERE username = #{username}
+    </select>
+
+    <!-- 사용자 비밀번호 업데이트 -->
+    <update id="update" parameterType="com.example.project.login.domain.User">
+        UPDATE users
+        SET password = #{password}
+        WHERE username = #{username}
+    </update>
+
+</mapper>
