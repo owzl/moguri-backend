@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.moguri.accountbook.repository.AccountBookMapper">
+
+    <resultMap id="accountBookMap" type="AccountBookVO">
+        <id column="accountbook_id" property="accountBookId"/> <!-- 기본 키 -->
+        <result column="member_id" property="memberId"/> <!-- 외래키 -->
+        <result column="transaction_date" property="transactionDate"/> <!-- 거래 날짜 -->
+        <result column="category" property="category"/> <!-- 카테고리 -->
+        <result column="amount" property="amount"/> <!-- 금액 -->
+        <result column="type" property="type"/> <!-- 거래 유형 -->
+        <result column="description" property="description"/> <!-- 설명 -->
+        <result column="payment_method" property="paymentMethod"/> <!-- 결제 방법 -->
+        <result column="created_at" property="createdAt"/> <!-- 생성 날짜 -->
+        <result column="updated_at" property="updatedAt"/> <!-- 업데이트 날짜 -->
+        <result column="deleted_at" property="deletedAt"/> <!-- 삭제 날짜 -->
+    </resultMap>
+
+    <!-- === 수입/지출 관리 === -->
+
+    <!-- 수입/지출 내역 작성 - insert -->
+    <insert id="createAccountBook" parameterType="AccountBookVO">
+        INSERT INTO accountbook (transaction_date, category, amount, type, description, payment_method, created_at)
+        VALUES (#{transactionDate}, #{category}, #{amount}, #{type}, #{description}, #{paymentMethod}, NOW())
+
+        <selectKey resultType="Long" keyProperty="accountBookId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <!-- 수입/지출 내역 수정 - update -->
+    <update id="updateAccountBook" parameterType="AccountBookVO">
+        UPDATE accountbook
+        SET transaction_date = #{transactionDate},
+            category         = #{category},
+            amount           = #{amount},
+            type             = #{type},
+            description      = #{description},
+            payment_method   = #{paymentMethod},
+            updated_at       = NOW()
+        WHERE accountbook_id = #{accountBookId}
+    </update>
+
+    <!-- 수입/지출 내역 삭제 - delete -->
+    <delete id="deleteAccountBook">
+        DELETE
+        FROM accountbook
+        WHERE accountbook_id = #{accountBookId}
+    </delete>
+
+    <!-- 수입/지출 내역 리스트 조회 - select -->
+    <select id="getAccountBookList" resultMap="accountBookMap">
+        <![CDATA[
+        SELECT *
+        FROM AccountBook
+        ORDER BY accountbook_id DESC
+        ]]>
+    </select>
+
+    <!-- 수입/지출 개별 내역 조회 -->
+    <select id="getAccountBook" resultType="org.moguri.accountbook.domain.AccountBookVO">
+        SELECT *
+        FROM AccountBook
+        WHERE accountbook_id = #{accountBookId}
+    </select>
+
+    <!-- 특정 날짜의 내역 조회 - maybe 캘린더용 -->
+    <select id="getAccountBookByDate" resultMap="accountBookMap">
+        SELECT *
+        FROM AccountBook
+        WHERE transaction_date = #{date}
+    </select>
+
+    <select id="findByAccountBookId" resultMap="accountBookMap">
+        SELECT *
+        FROM AccountBook
+        WHERE accountbook_id = #{accountBookId}
+    </select>
+
+
+
+</mapper>
