@@ -20,8 +20,8 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
-@MapperScan(basePackages = {"org.moguri.member.repository"})
-@ComponentScan(basePackages = {"org.moguri.member.service"})
+@MapperScan(basePackages = {"org.moguri.member.repository", "org.moguri.goal.mapper"})
+@ComponentScan(basePackages = {"org.moguri.member.service", "org.moguri.goal.service"})
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {

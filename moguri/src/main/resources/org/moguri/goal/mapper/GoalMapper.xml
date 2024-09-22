@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.goal.mapper.GoalMapper">
+
+    <resultMap id="GoalMap" type="org.moguri.goal.domain.GoalVO">
+        <id column="goal_id" property="goalId"></id>
+        <result column="member_id" property="memberId"></result>
+        <result column="goal_Name" property="goalName"></result>
+        <result column="goal_Amount" property="goalAmount"></result>
+        <result column="current_Amount" property="currentAmount"></result>
+        <result column="created_At" property="createdAt"></result>
+        <result column="updated_At" property="updatedAt"></result>
+        <result column="start_Date" property="startDate"></result>
+        <result column="end_Date" property="endDate"></result>
+    </resultMap>
+
+    <select id="get" resultMap="GoalMap">
+        SELECT *
+        from Goal
+        WHERE goal_id = #{goalId}
+    </select>
+
+    <!--    이대로 가도 괜찮은가?-->
+    <insert id="create">
+        insert into Goal (goal_Name, goal_Amount, current_Amount, created_At, start_Date, end_Date)
+        values (#{goalName}, #{goalAmount}, #{currentAmount},#{createdAt}, #{startDate}, #{endDate})
+        <selectKey resultType="Integer" keyProperty="goalId" keyColumn="goalId" order="AFTER"></selectKey>
+    </insert>
+
+    <update id="update">
+        update Goal
+        set goal_Name      = #{goalName},
+            goal_Amount    = #{goalAmount},
+            current_Amount = #{currentAmount},
+            start_Date     = #{startDate},
+            end_Date       = #{endDate},
+            updated_At     = now()
+        where goal_Id = #{goalId}
+    </update>
+
+    <delete id="delete">
+        delete
+        from Goal
+        where goal_Id = #{goalId}
+    </delete>
+</mapper>
