@@ -14,6 +14,7 @@ public class Member {
     private String email;
     private String password;
     private String nickName;
+    private int cottonCandy;
     private Role role;
     private LocalDateTime deletedAt;
 
