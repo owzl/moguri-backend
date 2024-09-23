@@ -34,8 +34,9 @@ public class AccountBookServiceImpl implements AccountBookService {
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
     }*/
     @Override
-    public Optional<AccountBook> getAccountBook(long accountBookId) {
-        return accountBookMapper.getAccountBook(accountBookId);
+    public AccountBook getAccountBook(long accountBookId) {
+        AccountBook accountBook = accountBookMapper.getAccountBook(accountBookId).orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        return accountBook;
     }
     /*@Override
     public Optional<AccountBook> getAccountBook(long accountBookId) {
@@ -54,7 +55,7 @@ public class AccountBookServiceImpl implements AccountBookService {
 
     // 수입/지출 내역 수정
     @Override
-    public void updateAccountBook(long accountBookId, AccountBookUpdateParam param) {
+    public void updateAccountBook(AccountBookUpdateParam param) {
         try {
             // param.setAccountBookId(accountBookId);
             accountBookMapper.updateAccountBook(param.toEntity());
@@ -62,7 +63,6 @@ public class AccountBookServiceImpl implements AccountBookService {
             throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
         }
     }
-
 
     // 수입/지출 내역 삭제
     @Override

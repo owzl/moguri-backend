@@ -14,13 +14,13 @@ public interface AccountBookService {
     List<AccountBook> getAccountBooks();
 
     // 수입/지출 개별 내역 조회
-    Optional<AccountBook> getAccountBook(long accountBookId);
+    AccountBook getAccountBook(long accountBookId);
 
     // 수입/지출 내역 등록
     void createAccountBook(AccountBook accountBook);
 
     // 수입/지출 내역 수정
-    void updateAccountBook(long accountBookId, AccountBookUpdateParam param);
+    void updateAccountBook(AccountBookUpdateParam param);
 
     // 수입/지출 내역 삭제
     void deleteAccountBook(long accountBookId);

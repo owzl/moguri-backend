@@ -43,10 +43,7 @@ public class AccountBookController {
     }*/
     @GetMapping("/{accountBookId}")
     public ApiResponse<?> getAccountBook(@PathVariable long accountBookId) {
-        Optional<AccountBook> optionalAccountBook = service.getAccountBook(accountBookId);
-
-        // 예외 처리
-        AccountBook accountBook = optionalAccountBook.orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        AccountBook accountBook = service.getAccountBook(accountBookId);
 
         return ApiResponse.of(AccountBookItem.of(accountBook));
     }
@@ -61,9 +58,9 @@ public class AccountBookController {
 
     // 수입/지출 내역 수정
     @PatchMapping("/{accountBookId}")
-    public ApiResponse<?> update(@PathVariable long accountBookId, @RequestBody AccountBookUpdateRequest request) {
+    public ApiResponse<?> update(@RequestBody AccountBookUpdateRequest request) {
         AccountBookUpdateParam param = request.convert();
-        service.updateAccountBook(accountBookId, param);
+        service.updateAccountBook(param);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
