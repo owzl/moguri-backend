@@ -14,6 +14,8 @@ import org.springframework.web.servlet.view.JstlView;
         "org.moguri.exception",
         "org.moguri.board.controller",
         "org.moguri.member.controller",
+        "org.moguri.event.attendance.controller",
+        "org.moguri.event.quiz.controller"
 }) // Spring MVC용 컴포넌트 등록을 위한 스캔 패키지
 public class ServletConfig implements WebMvcConfigurer {
 

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.event.quiz.repository.QuizMapper">
+
+    <resultMap id="quizMap" type="org.moguri.event.quiz.domain.Quiz">
+        <id column="quiz_id" property="quiz_id"/>
+        <result column="question" property="question"/>
+        <result column="type" property="type"/>
+        <result column="example1" property="example1"/>
+        <result column="example2" property="example2"/>
+        <result column="example3" property="example3"/>
+        <result column="example4" property="example4"/>
+        <result column="answer" property="answer"/>
+        <result column="created_at" property="created_at"/>
+        <result column="updated_at" property="updated_at"/>
+        <result column="deleted_at" property="deleted_at"/>
+    </resultMap>
+
+    <select id="getQuizList" resultMap="quizMap">
+        <![CDATA[
+        SELECT *
+        FROM Quiz
+        ]]>
+    </select>
+
+    <select id="getQuiz"
+            resultType="org.moguri.event.quiz.domain.Quiz">
+        SELECT *
+        FROM Quiz
+        WHERE quiz_id = #{quizId}
+
+    </select>
+
+    <insert id="createQuiz" parameterType="org.moguri.event.quiz.domain.Quiz">
+        INSERT INTO Quiz (question, type, example1, example2, example3, example4, answer, created_at)
+        VALUES (#{question}, #{type}, #{example1}, #{example2}, #{example3}, #{example4}, #{answer}, NOW())
+
+        <selectKey resultType="Long" keyProperty="quiz_id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <update id="updateQuiz" parameterType="org.moguri.event.quiz.domain.Quiz">
+        UPDATE Quiz
+        SET question     = #{question},
+            type         = #{type},
+            example1     = #{example1},
+            example2     = #{example2},
+            example3     = #{example3},
+            example4     = #{example4},
+            answer       = #{answer},
+            updated_at   = NOW()
+        WHERE quiz_id= #{quiz_id}
+    </update>
+
+    <delete id="deleteQuiz">
+        DELETE
+        FROM Quiz
+        WHERE quiz_id= #{quiz_id}
+    </delete>
+
+</mapper>

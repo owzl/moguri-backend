@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.event.attendance.repository.AttendanceMapper">
+
+    <resultMap id="attendanceMap" type="Attendance">
+        <id column="attendance_id" property="attendance_id"/>
+        <result column="member_id" property="member_id"/>
+        <result column="attendance_date" property="attendance_date"/>
+    </resultMap>
+
+    <select id="getAttendanceList" resultMap="attendanceMap">
+        <![CDATA[
+        SELECT *
+        FROM Attendance
+        ]]>
+    </select>
+
+    <select id="getAttendance"
+            resultType="org.moguri.event.attendance.domain.Attendance">
+        SELECT *
+        FROM Attendance
+        WHERE attendance_id = #{attendanceId}
+
+    </select>
+
+    <insert id="createAttendance" parameterType="Attendance">
+        INSERT INTO Attendance (member_id, attendance_date)
+        VALUES (#{member_id}, NOW())
+
+        <selectKey resultType="Long" keyProperty="attendance_id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+</mapper>
