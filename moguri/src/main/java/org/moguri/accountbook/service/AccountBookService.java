@@ -1,24 +1,26 @@
 package org.moguri.accountbook.service;
 
-import org.moguri.accountbook.domain.AccountBookVO;
+import org.moguri.accountbook.domain.AccountBook;
+import org.moguri.accountbook.param.AccountBookUpdateParam;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AccountBookService {
 
     /* === 수입/지출 관리 === */
 
     // 모든 내역 조회
-    List<AccountBookVO> getAccountBookList();
+    List<AccountBook> getAccountBooks();
 
     // 수입/지출 개별 내역 조회
-    AccountBookVO getAccountBook(long accountBookId);
+    Optional<AccountBook> getAccountBook(long accountBookId);
 
     // 수입/지출 내역 등록
-    void createAccountBook(AccountBookVO accountBook);
+    void createAccountBook(AccountBook accountBook);
 
     // 수입/지출 내역 수정
-    void updateAccountBook(AccountBookVO accountBook);
+    void updateAccountBook(long accountBookId, AccountBookUpdateParam param);
 
     // 수입/지출 내역 삭제
     void deleteAccountBook(long accountBookId);

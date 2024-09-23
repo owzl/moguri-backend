@@ -2,57 +2,73 @@ package org.moguri.accountbook.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.moguri.accountbook.domain.AccountBookVO;
+import org.moguri.accountbook.domain.AccountBook;
+import org.moguri.accountbook.param.AccountBookUpdateParam;
 import org.moguri.accountbook.repository.AccountBookMapper;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.exception.MoguriLogicException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountBookServiceImpl implements AccountBookService {
 
-    private final AccountBookMapper mapper;
+    private final AccountBookMapper accountBookMapper;
 
+    // 수입/지출 내역 리스트 조회
     @Override
-    public List<AccountBookVO> getAccountBookList() {
+    public List<AccountBook> getAccountBooks() {
         log.info("Fetching account book list...");
-        return mapper.getAccountBookList();
+        return accountBookMapper.getAccountBooks();
     }
 
-    @Override
-    public AccountBookVO getAccountBook(long accountBookId) {
+    // 수입/지출 개별 내역 조회
+    /*@Override
+    public AccountBook getAccountBook(long accountBookId) {
         log.info("Getting account book with ID: {}", accountBookId);
         return mapper.getAccountBook(accountBookId)
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
-    }
-
-
+    }*/
     @Override
-    public void createAccountBook(AccountBookVO accountBookVO) {
+    public Optional<AccountBook> getAccountBook(long accountBookId) {
+        return accountBookMapper.getAccountBook(accountBookId);
+    }
+    /*@Override
+    public Optional<AccountBook> getAccountBook(long accountBookId) {
+        return Optional.ofNullable(accountBookMapper.getAccountBook(accountBookId));
+    }*/
+
+    // 수입/지출 내역 등록
+    @Override
+    public void createAccountBook(AccountBook accountBook) {
         try {
-            mapper.createAccountBook(accountBookVO);
+            accountBookMapper.createAccountBook(accountBook);
         } catch (Exception e) {
             throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
         }
     }
 
+    // 수입/지출 내역 수정
     @Override
-    public void updateAccountBook(AccountBookVO accountBookVO) {
+    public void updateAccountBook(long accountBookId, AccountBookUpdateParam param) {
         try {
-            mapper.updateAccountBook(accountBookVO);
+            // param.setAccountBookId(accountBookId);
+            accountBookMapper.updateAccountBook(param.toEntity());
         } catch (Exception e) {
             throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
         }
     }
 
+
+    // 수입/지출 내역 삭제
     @Override
     public void deleteAccountBook(long accountBookId) {
         try {
-            mapper.deleteAccountBook(accountBookId);
+            accountBookMapper.deleteAccountBook(accountBookId);
         } catch (Exception e) {
             throw new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY);
         }

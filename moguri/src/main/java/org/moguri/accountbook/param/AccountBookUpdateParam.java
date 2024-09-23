@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.moguri.accountbook.domain.AccountBookVO;
+import org.moguri.accountbook.domain.AccountBook;
 
 import java.util.Date;
 
@@ -21,8 +21,8 @@ public class AccountBookUpdateParam {
     private String description;
     private String paymentMethod;
 
-    public AccountBookVO toEntity() {
-        return AccountBookVO.builder()
+    public AccountBook toEntity() {
+        return AccountBook.builder()
                 .accountBookId(accountBookId)
                 .transactionDate(transactionDate)
                 .category(category)

@@ -11,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountBookVO {
+public class AccountBook {
     private long accountBookId; // Auto_Increment
     private long memberId; // 외래키
     private Date transactionDate; // 거래 날짜
