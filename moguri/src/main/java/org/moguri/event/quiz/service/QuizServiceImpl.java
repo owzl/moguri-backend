@@ -2,14 +2,15 @@ package org.moguri.event.quiz.service;
 
 import lombok.RequiredArgsConstructor;
 import org.moguri.common.enums.ReturnCode;
+import org.moguri.common.response.PageRequest;
 import org.moguri.event.quiz.domain.Quiz;
 import org.moguri.event.quiz.repository.QuizMapper;
-import org.moguri.event.quiz.service.QuizService;
 import org.moguri.exception.MoguriLogicException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -19,15 +20,21 @@ public class QuizServiceImpl implements QuizService {
 
     private final QuizMapper quizMapper;
 
+    public int getTotalCount() {
+        return quizMapper.getTotalCount();
+    }
+
+    @Transactional(readOnly = true)
     @Override
-    public List<Quiz> getQuizList() {
-        return quizMapper.getQuizList();
+    public List<Quiz> getQuizzes(PageRequest pageRequest) {
+        return quizMapper.getQuizzes(pageRequest);
     }
 
     @Override
     public Quiz getQuiz(long quizId) {
-        return quizMapper.getQuiz(quizId)
-                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        Quiz quiz = Optional.ofNullable(quizMapper.getQuiz(quizId)).orElseThrow(() -> new
+                MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        return quiz;
     }
 
     @Override

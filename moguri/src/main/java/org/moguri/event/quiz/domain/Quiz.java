@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 public class Quiz {
 
-    private long quiz_id;
+    private long quizId;
     private String question;
     private int type;
     private String example1;
@@ -19,9 +19,9 @@ public class Quiz {
     private String example3;
     private String example4;
     private String answer;
-    private Date created_at;
-    private Date updated_at;
-    private Date deleted_at;
+    private Date createdAt;
+    private Date updatedAt;
+    private Date deletedAt;
 
 
 }

@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.moguri.event.attendance.domain.Attendance;
 import org.moguri.event.quiz.domain.Quiz;
-
-import java.util.Date;
 
 @Getter
 @AllArgsConstructor

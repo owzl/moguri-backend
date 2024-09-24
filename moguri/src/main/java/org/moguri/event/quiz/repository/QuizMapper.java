@@ -1,19 +1,19 @@
 package org.moguri.event.quiz.repository;
 
 import org.apache.ibatis.annotations.Mapper;
-import org.moguri.event.attendance.domain.Attendance;
+import org.moguri.common.response.PageRequest;
 import org.moguri.event.quiz.domain.Quiz;
 
-import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Optional;
 
 @Mapper
 public interface QuizMapper {
 
-    List<Quiz> getQuizList();
+    int getTotalCount();
 
-    Optional<Quiz> getQuiz(long quizId);
+    List<Quiz> getQuizzes(PageRequest pageRequest);
+
+    Quiz getQuiz(long quizId);
 
     void createQuiz(Quiz quiz);
 

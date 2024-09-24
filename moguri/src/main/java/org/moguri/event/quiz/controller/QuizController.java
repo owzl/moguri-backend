@@ -4,18 +4,16 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.ApiResponse;
-import org.moguri.event.attendance.domain.Attendance;
-import org.moguri.event.attendance.param.AttendanceCreateParam;
-import org.moguri.event.attendance.service.AttendanceService;
+import org.moguri.common.response.MoguriPage;
+import org.moguri.common.response.PageRequest;
+import org.moguri.common.validator.PageLimitSizeValidator;
 import org.moguri.event.quiz.domain.Quiz;
 import org.moguri.event.quiz.param.QuizCreateParam;
 import org.moguri.event.quiz.param.QuizUpdateParam;
 import org.moguri.event.quiz.service.QuizService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/quiz")
@@ -25,12 +23,16 @@ public class QuizController {
     private final QuizService quizService;
 
     @GetMapping("")
-    public ApiResponse<List<QuizItem>> getQuizList() {
-        List<Quiz> quizzes = quizService.getQuizList();
-        List<QuizItem> items = quizzes.stream()
-                .map(QuizItem::of)
-                .collect(Collectors.toList());
-        return ApiResponse.of(items);
+    public ApiResponse<MoguriPage<Quiz>> getQuizzes(QuizGetRequest request) {
+
+        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
+
+        List<Quiz> quizzes = quizService.getQuizzes(pageRequest);
+        int totalCount = quizService.getTotalCount();
+
+        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount,
+                quizzes.stream().map(QuizItem::of).toList()));
     }
 
     @GetMapping("/{quizId}")
@@ -41,18 +43,20 @@ public class QuizController {
         return ApiResponse.of(QuizItem.of(quiz));
     }
 
-    @PostMapping
+    @PostMapping("")
     public ApiResponse<ReturnCode> create(@RequestBody QuizCreateRequest request) {
         QuizCreateParam param = request.convert();
         quizService.createQuiz(param.toEntity());
+
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
     @PatchMapping("/{quizId}")
     public ApiResponse<ReturnCode> update(@PathVariable long quizId, @RequestBody QuizUpdateRequest request) {
-        request.setQuiz_id(quizId); // ID 설정
+        request.setQuizId(quizId);
         QuizUpdateParam param = request.convert();
         quizService.updateQuiz(param.toEntity());
+
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
@@ -63,9 +67,17 @@ public class QuizController {
     }
 
     @Data
+    public static class QuizGetRequest {
+
+        private int page = 0;
+        private int limit = 30;
+        //default 값
+    }
+
+    @Data
     private static class QuizItem {
 
-        private long quiz_id;
+        private long quizId;
         private String question;
         private int type;
         private String example1;
@@ -76,7 +88,7 @@ public class QuizController {
 
         private static QuizItem of(Quiz quiz) {
             QuizItem converted = new QuizItem();
-            converted.setQuiz_id(quiz.getQuiz_id());
+            converted.setQuizId(quiz.getQuizId());
             converted.setQuestion(quiz.getQuestion());
             converted.setType(quiz.getType());
             converted.setExample1(quiz.getExample1());
@@ -114,7 +126,7 @@ public class QuizController {
     @Data
     public static class QuizUpdateRequest {
 
-        private long quiz_id;
+        private long quizId;
         private String question;
         private int type;
         private String example1;
@@ -125,7 +137,7 @@ public class QuizController {
 
         public QuizUpdateParam convert() {
             return QuizUpdateParam.builder()
-                    .quiz_id(quiz_id)
+                    .quizId(quizId)
                     .question(question)
                     .type(type)
                     .example1(example1)

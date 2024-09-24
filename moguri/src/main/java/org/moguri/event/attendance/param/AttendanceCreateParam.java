@@ -14,13 +14,13 @@ import java.util.Date;
 @NoArgsConstructor
 public class AttendanceCreateParam {
 
-    private long member_id;
-    private Date attendance_date;
+    private long memberId;
+    private Date attendanceDate;
 
     public Attendance toEntity() {
         Attendance attendance = Attendance.builder()
-                .member_id(member_id)
-                .attendance_date(attendance_date)
+                .memberId(memberId)
+                .attendanceDate(attendanceDate)
                 .build();
         return attendance;
     }

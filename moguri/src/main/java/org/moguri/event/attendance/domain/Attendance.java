@@ -11,9 +11,7 @@ import java.util.Date;
 @Data
 public class Attendance {
 
-    private long attendance_id;
-    private long member_id;
-    private Date attendance_date;
-
-
+    private long attendanceId;
+    private long memberId;
+    private Date attendanceDate;
 }

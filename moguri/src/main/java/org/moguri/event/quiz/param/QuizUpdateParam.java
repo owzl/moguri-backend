@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.moguri.event.attendance.domain.Attendance;
 import org.moguri.event.quiz.domain.Quiz;
-
-import java.util.Date;
 
 @Getter
 @AllArgsConstructor
@@ -15,7 +12,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class QuizUpdateParam {
 
-    private long quiz_id;
+    private long quizId;
     private String question;
     private int type;
     private String example1;
@@ -26,7 +23,7 @@ public class QuizUpdateParam {
 
     public Quiz toEntity() {
         Quiz quiz = Quiz.builder()
-                .quiz_id(quiz_id)
+                .quizId(quizId)
                 .question(question)
                 .type(type)
                 .example1(example1)
