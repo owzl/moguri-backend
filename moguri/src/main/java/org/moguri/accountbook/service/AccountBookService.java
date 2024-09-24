@@ -2,16 +2,18 @@ package org.moguri.accountbook.service;
 
 import org.moguri.accountbook.domain.AccountBook;
 import org.moguri.accountbook.param.AccountBookUpdateParam;
+import org.moguri.common.response.PageRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AccountBookService {
 
     /* === 수입/지출 관리 === */
 
-    // 모든 내역 조회
-    List<AccountBook> getAccountBooks();
+    // 수입/지출 모든 내역 조회
+    List<AccountBook> getAccountBooks(PageRequest pageRequest);
+    // 페이징
+    int getTotalAccountBooksCount();
 
     // 수입/지출 개별 내역 조회
     AccountBook getAccountBook(long accountBookId);

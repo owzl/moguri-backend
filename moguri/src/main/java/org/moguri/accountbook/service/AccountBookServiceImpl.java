@@ -6,6 +6,7 @@ import org.moguri.accountbook.domain.AccountBook;
 import org.moguri.accountbook.param.AccountBookUpdateParam;
 import org.moguri.accountbook.repository.AccountBookMapper;
 import org.moguri.common.enums.ReturnCode;
+import org.moguri.common.response.PageRequest;
 import org.moguri.exception.MoguriLogicException;
 import org.springframework.stereotype.Service;
 
@@ -21,27 +22,22 @@ public class AccountBookServiceImpl implements AccountBookService {
 
     // 수입/지출 내역 리스트 조회
     @Override
-    public List<AccountBook> getAccountBooks() {
+    public List<AccountBook> getAccountBooks(PageRequest pageRequest) {
         log.info("Fetching account book list...");
-        return accountBookMapper.getAccountBooks();
+        return accountBookMapper.getAccountBooks(pageRequest);
+    }
+    // 수입/지출 내역 개수 - 페이징
+    @Override
+    public int getTotalAccountBooksCount() {
+        return accountBookMapper.getAccountBooksCount();
     }
 
     // 수입/지출 개별 내역 조회
-    /*@Override
-    public AccountBook getAccountBook(long accountBookId) {
-        log.info("Getting account book with ID: {}", accountBookId);
-        return mapper.getAccountBook(accountBookId)
-                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
-    }*/
     @Override
     public AccountBook getAccountBook(long accountBookId) {
-        AccountBook accountBook = accountBookMapper.getAccountBook(accountBookId).orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        AccountBook accountBook = Optional.ofNullable(accountBookMapper.getAccountBook(accountBookId)).orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
         return accountBook;
     }
-    /*@Override
-    public Optional<AccountBook> getAccountBook(long accountBookId) {
-        return Optional.ofNullable(accountBookMapper.getAccountBook(accountBookId));
-    }*/
 
     // 수입/지출 내역 등록
     @Override
@@ -51,6 +47,7 @@ public class AccountBookServiceImpl implements AccountBookService {
         } catch (Exception e) {
             throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
         }
+
     }
 
     // 수입/지출 내역 수정

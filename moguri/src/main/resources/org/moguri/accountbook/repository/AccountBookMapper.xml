@@ -22,12 +22,18 @@
     <!-- === 수입/지출 관리 === -->
 
     <!-- 수입/지출 내역 리스트 조회 - select -->
-    <select id="getAccountBooks" resultMap="accountBookMap">
+    <select id="getAccountBooks" parameterType="org.moguri.common.response.PageRequest" resultMap="accountBookMap">
         <![CDATA[
         SELECT *
         FROM AccountBook
         ORDER BY accountbook_id DESC
+            LIMIT #{limit} OFFSET #{offset}
         ]]>
+    </select>
+    <!-- 수입/지출 내역 개수 조회 - select -->
+    <select id="getAccountBooksCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM AccountBook
     </select>
 
     <!-- 수입/지출 개별 내역 조회 -->
@@ -36,20 +42,36 @@
         FROM AccountBook
         WHERE accountbook_id = #{accountBookId}
     </select>
-<!--
-    <select id="getAccountBook" resultMap="accountBookMap">
-        SELECT *
-        FROM AccountBook
-        WHERE accountbook_id = #{accountBookId}
-    </select>
--->
-
+    <!--
+        <select id="getAccountBook" resultMap="accountBookMap">
+            SELECT *
+            FROM AccountBook
+            WHERE accountbook_id = #{accountBookId}
+        </select>
+    -->
 
     <!-- 수입/지출 내역 작성 - insert -->
     <insert id="createAccountBook" parameterType="AccountBook">
-        INSERT INTO AccountBook (member_id, transaction_date, category, amount, type, description, payment_method, created_at)
-        VALUES (#{memberId}, #{transactionDate}, #{category}, #{amount}, #{type}, #{description}, #{paymentMethod}, NOW())
-
+        INSERT INTO AccountBook(
+                                 member_id
+                               , transaction_date
+                               , category
+                               , amount
+                               , type
+                               , description
+                               , payment_method
+                               , created_at
+                                )
+        VALUES (
+                #{memberId}
+              , #{transactionDate}
+              , #{category}
+              , #{amount}
+              , #{type}
+              , #{description}
+              , #{paymentMethod}
+              , now()
+               )
         <selectKey resultType="Long" keyProperty="accountBookId" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -65,9 +87,7 @@
             type             = #{type},
             description      = #{description},
             payment_method   = #{paymentMethod},
-            created_at       = #{createdAt},
-            updated_at       = NOW(),
-            deleted_at       = #{deletedAt}
+            updated_at       = now()
         WHERE accountbook_id = #{accountBookId}
     </update>
 
@@ -91,7 +111,5 @@
         FROM AccountBook
         WHERE accountbook_id = #{accountBookId}
     </select>-->
-
-
 
 </mapper>

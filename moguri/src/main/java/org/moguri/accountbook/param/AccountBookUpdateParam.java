@@ -13,7 +13,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 public class AccountBookUpdateParam {
-    private long accountBookId; // ID를 포함해야 함
+    private long accountBookId;
     private Date transactionDate;
     private String category;
     private int amount;
