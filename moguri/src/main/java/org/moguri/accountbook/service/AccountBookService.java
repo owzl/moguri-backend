@@ -12,7 +12,8 @@ public interface AccountBookService {
 
     // 수입/지출 모든 내역 조회
     List<AccountBook> getAccountBooks(PageRequest pageRequest);
-    // 페이징
+
+    // 수입/지출 모든 내역 개수 - 페이징
     int getTotalAccountBooksCount();
 
     // 수입/지출 개별 내역 조회
@@ -27,8 +28,5 @@ public interface AccountBookService {
     // 수입/지출 내역 삭제
     void deleteAccountBook(long accountBookId);
 
-
-    // 특정 날짜의 내역 조회 - maybe 캘린더용
-    // List<AccountBookDTO> getAccountBookByDate(Date date);
 
 }

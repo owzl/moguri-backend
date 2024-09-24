@@ -26,14 +26,6 @@ public class AccountBookController {
     private final AccountBookService service;
 
     // 수입/지출 내역 리스트 조회
-    /*@GetMapping("")
-    public ApiResponse<?> getAccountBooks() {
-        List<AccountBook> accountBooks = service.getAccountBooks();
-        List<AccountBookItem> items = accountBooks.stream()
-                .map(AccountBookItem::of)
-                .collect(Collectors.toList());
-        return ApiResponse.of(items);
-    }*/
     @GetMapping("")
     public ApiResponse<?> getAccountBooks(AccountBookGetRequest request) {
         PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);

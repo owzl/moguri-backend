@@ -5,15 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6957ac8e-dc10-479e-bd8c-a474e63159db" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/ba5b1362-1d8f-4e36-a306-6f125a7c4f47.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/ba5b1362-1d8f-4e36-a306-6f125a7c4f47.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/accountbook/controller/AccountBookController.java" beforeDir="false" afterPath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/accountbook/controller/AccountBookController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/accountbook/param/AccountBookUpdateParam.java" beforeDir="false" afterPath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/accountbook/param/AccountBookUpdateParam.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/accountbook/repository/AccountBookMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/accountbook/repository/AccountBookMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/accountbook/service/AccountBookService.java" beforeDir="false" afterPath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/accountbook/service/AccountBookService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/accountbook/service/AccountBookServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/accountbook/service/AccountBookServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/common/response/PageRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/moguri/src/main/java/org/moguri/common/response/PageRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/moguri/src/main/resources/org/moguri/accountbook/repository/AccountBookMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/moguri/src/main/resources/org/moguri/accountbook/repository/AccountBookMapper.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -198,7 +190,7 @@
       <workItem from="1727017906027" duration="4460000" />
       <workItem from="1727050987495" duration="15889000" />
       <workItem from="1727071930596" duration="10060000" />
-      <workItem from="1727136718855" duration="7006000" />
+      <workItem from="1727136718855" duration="8147000" />
     </task>
     <servers />
   </component>

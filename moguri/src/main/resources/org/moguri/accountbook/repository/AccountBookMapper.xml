@@ -30,6 +30,7 @@
             LIMIT #{limit} OFFSET #{offset}
         ]]>
     </select>
+
     <!-- 수입/지출 내역 개수 조회 - select -->
     <select id="getAccountBooksCount" resultType="java.lang.Integer">
         SELECT COUNT(*)
@@ -42,13 +43,6 @@
         FROM AccountBook
         WHERE accountbook_id = #{accountBookId}
     </select>
-    <!--
-        <select id="getAccountBook" resultMap="accountBookMap">
-            SELECT *
-            FROM AccountBook
-            WHERE accountbook_id = #{accountBookId}
-        </select>
-    -->
 
     <!-- 수입/지출 내역 작성 - insert -->
     <insert id="createAccountBook" parameterType="AccountBook">
@@ -99,17 +93,5 @@
     </delete>
 
 
-    <!-- 특정 날짜의 내역 조회 - maybe 캘린더용 -->
-    <!--<select id="getAccountBookByDate" resultMap="accountBookMap">
-        SELECT *
-        FROM AccountBook
-        WHERE transaction_date = #{date}
-    </select>
-
-    <select id="findByAccountBookId" resultMap="accountBookMap">
-        SELECT *
-        FROM AccountBook
-        WHERE accountbook_id = #{accountBookId}
-    </select>-->
 
 </mapper>
