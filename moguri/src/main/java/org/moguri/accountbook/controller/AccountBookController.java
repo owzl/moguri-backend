@@ -1,5 +1,6 @@
 package org.moguri.accountbook.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,6 +82,7 @@ public class AccountBookController {
     public static class AccountBookItem {
         private long accountBookId;
         private long memberId;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private Date transactionDate;
         private String category;
         private int amount;
