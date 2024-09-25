@@ -15,5 +15,4 @@ public class PageRequest {
     }
 
     public int getOffset() { return page * limit; }
-
 }
