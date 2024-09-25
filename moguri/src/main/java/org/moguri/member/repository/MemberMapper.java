@@ -6,7 +6,6 @@ import org.moguri.member.domain.Member;
 import org.moguri.member.param.MemberUpdateParam;
 
 import java.util.List;
-import java.util.Optional;
 
 @Mapper
 public interface MemberMapper {
@@ -17,7 +16,7 @@ public interface MemberMapper {
 
     int save(Member member);
 
-    Optional<Member> findById(long id);
+    Member findById(long id);
 
     void update(long id, MemberUpdateParam param);
 

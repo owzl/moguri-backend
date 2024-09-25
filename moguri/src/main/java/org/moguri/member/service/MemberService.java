@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,19 +37,18 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member getMember(Long id) {
-        return memberMapper.findById(id)
-                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        Member member = Optional.ofNullable(memberMapper.findById(id)).orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+
+        return member;
     }
 
     public void remove(Long id) {
-        memberMapper.findById(id)
-                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        Optional.ofNullable(memberMapper.findById(id)).orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
         memberMapper.delete(id);
     }
 
     public void update(Long id, MemberUpdateParam param) {
-        memberMapper.findById(id)
-                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        Optional.ofNullable(memberMapper.findById(id)).orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
         memberMapper.update(id, param);
     }
 }

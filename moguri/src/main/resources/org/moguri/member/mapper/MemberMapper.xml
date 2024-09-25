@@ -17,8 +17,8 @@
                deletedAt
         FROM member
         ORDER BY createdAt DESC
-            LIMIT #{pageRequest.size}
-        OFFSET #{pageRequest.offset}
+            LIMIT #{page}
+        OFFSET #{limit}
     </select>
 
     <!-- 총 멤버 수 조회 쿼리 -->
