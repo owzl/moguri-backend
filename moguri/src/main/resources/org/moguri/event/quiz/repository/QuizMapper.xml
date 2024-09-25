@@ -26,12 +26,10 @@
     <select id="getQuizzes"
             parameterType="org.moguri.common.response.PageRequest"
             resultType="org.moguri.event.quiz.domain.Quiz">
-        <![CDATA[
         SELECT *
         FROM Quiz
         LIMIT #{limit}
         OFFSET #{offset}
-        ]]>
     </select>
 
     <select id="getQuiz"
@@ -39,7 +37,6 @@
         SELECT *
         FROM Quiz
         WHERE quiz_id = #{quizId}
-
     </select>
 
     <insert id="createQuiz" parameterType="org.moguri.event.quiz.domain.Quiz">

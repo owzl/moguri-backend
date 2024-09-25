@@ -18,13 +18,10 @@
     <select id="getAttendances"
             parameterType="org.moguri.common.response.PageRequest"
             resultType="org.moguri.event.attendance.domain.Attendance">
-            <![CDATA[
-                SELECT *
-                FROM Attendance
-                LIMIT #{limit}
-                OFFSET #{offset}
-            ]]>
-
+        SELECT *
+        FROM Attendance
+        LIMIT #{limit}
+        OFFSET #{offset}
     </select>
 
     <select id="getAttendance"
