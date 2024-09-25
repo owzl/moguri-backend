@@ -47,14 +47,12 @@ public class AccountBookServiceImpl implements AccountBookService {
         } catch (Exception e) {
             throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
         }
-
     }
 
     // 수입/지출 내역 수정
     @Override
     public void updateAccountBook(AccountBookUpdateParam param) {
         try {
-            // param.setAccountBookId(accountBookId);
             accountBookMapper.updateAccountBook(param.toEntity());
         } catch (Exception e) {
             throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);

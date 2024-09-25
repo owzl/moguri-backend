@@ -1,5 +1,6 @@
 package org.moguri.accountbook.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,7 @@ import java.util.Date;
 public class AccountBook {
     private long accountBookId; // Auto_Increment
     private long memberId; // 외래키
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date transactionDate; // 거래 날짜
     private String category; // 카테고리
     private int amount; // 금액
