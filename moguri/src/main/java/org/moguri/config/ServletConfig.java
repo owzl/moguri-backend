@@ -13,6 +13,7 @@ import org.springframework.web.servlet.view.JstlView;
         "org.moguri.*",
         "org.moguri.exception",
         "org.moguri.member.controller",
+        "org.moguri.accountbook.controller"
 }) // Spring MVC용 컴포넌트 등록을 위한 스캔 패키지
 public class ServletConfig implements WebMvcConfigurer {
 
