@@ -1,25 +1,23 @@
-package org.moguri.goal.domain;
+package org.moguri.goal.param;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
-@Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 @Builder
-public class GoalVO {
-    private int goalId;
-    private int memberId;
+@NoArgsConstructor
+public class GoalUpdateParam {
+
     private String goalName;
     private BigDecimal goalAmount;
     private BigDecimal currentAmount;
-    private Date createdAt;
-    private Date updatedAt;
     private Date startDate;
     private Date endDate;
+
+
 }

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.moguri.goal.mapper.GoalMapper">
+<mapper namespace="org.moguri.goal.repository.GoalMapper">
 
-    <resultMap id="GoalMap" type="org.moguri.goal.domain.GoalVO">
+    <resultMap id="GoalMap" type="org.moguri.goal.domain.Goal">
         <id column="goal_id" property="goalId"></id>
         <result column="member_id" property="memberId"></result>
         <result column="goal_Name" property="goalName"></result>
@@ -16,17 +16,17 @@
         <result column="end_Date" property="endDate"></result>
     </resultMap>
 
-    <select id="get" resultMap="GoalMap">
+    <select id="getGoal" resultMap="GoalMap">
         SELECT *
         from Goal
-        WHERE goal_id = #{goalId}
+        WHERE goal_Id = #{goalId}
     </select>
 
     <!--    이대로 가도 괜찮은가?-->
     <insert id="create">
         insert into Goal (goal_Name, goal_Amount, current_Amount, created_At, start_Date, end_Date)
         values (#{goalName}, #{goalAmount}, #{currentAmount},#{createdAt}, #{startDate}, #{endDate})
-        <selectKey resultType="Integer" keyProperty="goalId" keyColumn="goalId" order="AFTER"></selectKey>
+        <selectKey resultType="Long" keyProperty="goalId" keyColumn="goalId" order="AFTER"></selectKey>
     </insert>
 
     <update id="update">
