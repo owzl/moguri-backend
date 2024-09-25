@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.moguri.common.enums.Role;
 import org.moguri.member.domain.Member;
 
+import static org.moguri.member.domain.CottonCandyConst.INITIAL_COTTON_CANDY;
+
 @Getter
 @AllArgsConstructor
 @Builder
@@ -27,6 +29,7 @@ public class MemberCreateParam {
                 .password(password)
                 .nickName(nickName)
                 .role(Role.USER)
+                .cottonCandy(INITIAL_COTTON_CANDY)
                 .build();
         return member;
     }

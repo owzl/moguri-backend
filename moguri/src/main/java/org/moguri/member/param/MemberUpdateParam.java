@@ -16,4 +16,6 @@ public class MemberUpdateParam {
     private String name;
 
     private String nickName;
+
+    private int cottonCandy;
 }

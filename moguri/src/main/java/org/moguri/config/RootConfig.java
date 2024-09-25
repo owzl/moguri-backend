@@ -22,10 +22,12 @@ import javax.sql.DataSource;
 @PropertySource({"classpath:/application.properties"})
 @MapperScan(basePackages = {"org.moguri.member.repository",
                             "org.moguri.event.attendance.repository",
-                            "org.moguri.event.quiz.repository"})
+                            "org.moguri.event.quiz.repository",
+                            "org.moguri.accountbook.repository"})
 @ComponentScan(basePackages = {"org.moguri.member.service",
                                "org.moguri.event.attendance.service",
-                               "org.moguri.event.quiz.service"})
+                               "org.moguri.event.quiz.service",
+                               "org.moguri.accountbook.service"})
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {

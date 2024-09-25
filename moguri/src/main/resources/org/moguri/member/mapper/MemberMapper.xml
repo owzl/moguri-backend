@@ -3,55 +3,68 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.moguri.member.repository.MemberMapper">
-    <resultMap id="authMap" type="AuthVO">
-        <result property="username" column="username"/>
-        <result property="auth" column="auth"/>
-    </resultMap
-    >
-    <resultMap id="memberMap" type="MemberVO">
-        <id property="username" column="username"/>
-        <result property="username" column="username"/>
-        <result property="password" column="password"/>
-        <result property="email" column="email"/>
-        <result property="regDate" column="reg_date"/>
-        <result property="updateDate" column="update_date"/>
-        <collection property="authList" resultMap="authMap"/>
-    </resultMap
-    >
+
+    <!-- 전체 멤버 조회 쿼리 -->
+    <select id="findAll" resultType="Member">
+        SELECT id,
+               email,
+               password,
+               nickName,
+               cottonCandy,
+               role,
+               createdAt,
+               updatedAt,
+               deletedAt
+        FROM member
+        ORDER BY createdAt DESC
+            LIMIT #{pageRequest.size}
+        OFFSET #{pageRequest.offset}
+    </select>
+
+    <!-- 총 멤버 수 조회 쿼리 -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM member
+    </select>
+
+    <!-- 멤버 저장 쿼리 -->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO member (email, password, nickName, cottonCandy, role, createdAt, updatedAt)
+        VALUES (#{email}, #{password}, #{nickName}, #{cottonCandy}, #{role}, NOW(), NOW())
+    </insert>
+
+    <!-- ID로 멤버 조회 쿼리 -->
+    <select id="findById" resultType="Member">
+        SELECT id,
+               email,
+               password,
+               nickName,
+               cottonCandy,
+               role,
+               createdAt,
+               updatedAt,
+               deletedAt
+        FROM member
+        WHERE id = #{id}
+    </select>
+
+    <!-- 멤버 정보 수정 쿼리 -->
     <update id="update">
-        UPDATE tbl_member
-        SET email       = #{email},
-            update_date = now()
-        WHERE username = #{username}
+        UPDATE member
+        SET email       = #{param.email},
+            password    = #{param.password},
+            nickName    = #{param.nickName},
+            cottonCandy = #{param.cottonCandy},
+            role        = #{param.role},
+            updatedAt   = NOW()
+        WHERE id = #{id}
     </update>
 
-    <update id="updatePassword">
-        UPDATE tbl_member
-        SET password    = #{newPassword},
-            update_date = now()
-        WHERE username = #{username}
+    <!-- 멤버 삭제 쿼리 (소프트 삭제) -->
+    <update id="delete">
+        UPDATE member
+        SET deletedAt = NOW()
+        WHERE id = #{id}
     </update>
 
-    <select id="get" resultMap="memberMap">
-        SELECT m.username, password, email, reg_date, update_date, auth
-        FROM tbl_member m
-                 LEFT OUTER JOIN tbl_member_auth a
-                                 ON m.username = a.username
-        where m.username = #{username}
-    </select>
-    <select id="findByUsername" resultType="MemberVO">
-        SELECT *
-        FROM tbl_member
-        WHERE username = #{username}
-    </select>
-
-    <insert id="insert">
-        INSERT INTO tbl_member
-        VALUES (#{username}, #{password}, #{email}, now(), now(), null)
-    </insert>
-
-    <insert id="insertAuth">
-        INSERT INTO tbl_member_auth(username, auth)
-        VALUES (#{username}, #{auth})
-    </insert>
 </mapper>
