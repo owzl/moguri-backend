@@ -5,6 +5,7 @@ import org.moguri.common.enums.ReturnCode;
 import org.moguri.exception.MoguriLogicException;
 import org.moguri.goal.domain.Goal;
 import org.moguri.goal.param.GoalCreateParam;
+import org.moguri.goal.param.GoalUpdateParam;
 import org.moguri.goal.repository.GoalMapper;
 
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class GoalService{
+public class GoalService {
 
     final private GoalMapper goalMapper;
 
@@ -25,21 +26,29 @@ public class GoalService{
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
     }
 
-    public Goal update(Goal goal){
+    public Goal update(Long goalId, GoalUpdateParam param) throws MoguriLogicException {
+        Goal goal = getGoal(goalId);
+//    유효성검사
+        if (param.getGoalName() == null) {
+            throw new IllegalArgumentException("Goal name cannot be null");
+        }
+        goal.setGoalName(param.getGoalName());
+        goal.setCurrentAmount(param.getCurrentAmount());
+        goal.setStartDate(param.getStartDate());
+        goal.setEndDate(param.getEndDate());
         goalMapper.update(goal);
         return getGoal(goal.getGoalId());
     }
-    //gpt
-    public Goal create(GoalCreateParam param){
+
+    public void create(GoalCreateParam param) { //goal
         Goal goal = param.toEntity();
         goalMapper.create(goal);
-        return getGoal(goal.getGoalId());
+
     }
 
-    public Goal delete(Long goalId){
+    public Goal delete(Long goalId) {
         Goal goal = getGoal(goalId);
         goalMapper.delete(goalId);
         return goal;
     }
 }
-

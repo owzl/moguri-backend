@@ -22,11 +22,9 @@
         WHERE goal_Id = #{goalId}
     </select>
 
-    <!--    이대로 가도 괜찮은가?-->
     <insert id="create">
-        insert into Goal (goal_Name, goal_Amount, current_Amount, created_At, start_Date, end_Date)
-        values (#{goalName}, #{goalAmount}, #{currentAmount},#{createdAt}, #{startDate}, #{endDate})
-        <selectKey resultType="Long" keyProperty="goalId" keyColumn="goalId" order="AFTER"></selectKey>
+        insert into Goal (member_id, goal_Name, goal_Amount, current_Amount, created_At, start_Date, end_Date)
+        values (#{memberId}, #{goalName}, #{goalAmount}, #{currentAmount}, now(), #{startDate}, #{endDate})
     </insert>
 
     <update id="update">

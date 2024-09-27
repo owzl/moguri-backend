@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 public class Goal {
     private long goalId;
-    private int memberId;
+    private long memberId;
     private String goalName;
     private BigDecimal goalAmount;
     private BigDecimal currentAmount;
