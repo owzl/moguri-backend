@@ -19,6 +19,7 @@ import java.io.IOException;
 @Log4j
 @Component
 @RequiredArgsConstructor
+//인증이 성공하면 LoginSuccessHandler가 호출
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtProcessor jwtProcessor;
@@ -35,11 +36,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        // 인증 결과 Principal
+        // 인증된 사용자의 정보를 담고 있는 객체
         CustomUser user = (CustomUser) authentication.getPrincipal();
 
-        // 인증 성공 결과를 JSON으로 직접 응답
+        //발급된 jwt 토큰과 사용자 정보를 묶어서 반환하는 데이터 전송 객체 (AuthResultDTO)
         AuthResultDTO result = makeAuthResult(user);
         JsonResponse.send(response, result);
     }
 }
+// 1.onAuthenticationSuccess 호출되고 여기서 인증된 사용자 정보를 기반으로 jwt토큰이랑 AuthResultDTo 생성
+// 2.생성한 dto를 json 형태로 클라이언트에게 반환

@@ -8,7 +8,7 @@ import javax.servlet.ServletContext;
 
 public class SecurityInitializer extends AbstractSecurityWebApplicationInitializer {
 
-    // 문자셋 필터
+    // 문자셋 필터 등록
     private CharacterEncodingFilter encodingFilter() {
         CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
         encodingFilter.setEncoding("UTF-8");

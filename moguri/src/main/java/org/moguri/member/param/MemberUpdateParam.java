@@ -11,9 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberUpdateParam {
 
-    private String password;
-
-    private String name;
-
-    private String nickName;
+    private String password;  // 비밀번호 업데이트
+    private String nickName;  // 닉네임 업데이트
 }

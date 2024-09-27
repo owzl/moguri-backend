@@ -17,7 +17,7 @@ public class JwtProcessor { // 헬퍼클래스란?
     private Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 // private Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256); -- 운영시 사용
 
-    // JWT 생성
+    // JWT 생성 ( 토큰생성)
     public String generateToken(String subject) {
         return Jwts.builder()
                 .setSubject(subject)
@@ -27,7 +27,7 @@ public class JwtProcessor { // 헬퍼클래스란?
                 .compact();
     }
 
-    // JWT Subject(username) 추출 - 해석 불가인 경우 예외 발생
+    // JWT Subject(username) (주제추출) - 해석 불가인 경우 예외 발생
 // 예외 ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException,
 // IllegalArgumentException
     public String getUsername(String token) {
@@ -39,7 +39,7 @@ public class JwtProcessor { // 헬퍼클래스란?
                 .getSubject();
     }
 
-    // JWT 검증(유효 기간 검증) - 해석 불가인 경우 예외 발생
+    // JWT 검증(유효 기간 검증) - 해석 불가인 경우 예외 발생 ( 토큰 검증)
     public boolean validateToken(String token) {
         Jws<Claims> claims = Jwts.parserBuilder()
                 .setSigningKey(key)

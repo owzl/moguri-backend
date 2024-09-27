@@ -19,23 +19,27 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource({"classpath:/application.properties"})
-@MapperScan(basePackages = {"org.moguri.member.repository"})
-@ComponentScan(basePackages = {"org.moguri.member.service"})
+@PropertySource("classpath:application.properties") // Ensure correct path to properties file
+@MapperScan({"org.moguri.member.repository", "org.moguri.login.repository"}) // Ensure this package contains MyBatis mappers
+@ComponentScan({"org.moguri.member.service", "org.moguri.member.repository","org.moguri.login.service"}) // Include all relevant packages
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {
+
     @Value("${jdbc.driver}")
-    String driver;
+    private String driver;
+
     @Value("${jdbc.url}")
-    String url;
+    private String url;
+
     @Value("${jdbc.username}")
-    String username;
+    private String username;
+
     @Value("${jdbc.password}")
-    String password;
+    private String password;
 
     @Autowired
-    ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     @Bean
     public DataSource dataSource() {
@@ -44,22 +48,19 @@ public class RootConfig {
         config.setJdbcUrl(url);
         config.setUsername(username);
         config.setPassword(password);
-        HikariDataSource dataSource = new HikariDataSource(config);
-        return dataSource;
+        return new HikariDataSource(config);
     }
 
     @Bean
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
-        sqlSessionFactory.setConfigLocation(
-                applicationContext.getResource("classpath:/mybatis-config.xml"));
+        sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:mybatis-config.xml"));
         sqlSessionFactory.setDataSource(dataSource());
         return sqlSessionFactory.getObject();
     }
 
     @Bean
     public DataSourceTransactionManager transactionManager() {
-        DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource());
-        return manager;
+        return new DataSourceTransactionManager(dataSource());
     }
 }

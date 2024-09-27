@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.member.repository.MemberMapper">
+
+    <!-- Member 도메인에 대한 resultMap -->
+    <resultMap id="memberMap" type="org.moguri.member.domain.Member">
+        <id property="id" column="MEMBER_ID"/>
+        <result property="email" column="EMAIL"/>
+        <result property="nickName" column="NICKNAME"/>
+        <result property="password" column="PASSWORD"/>
+        <result property="role" column="ROLE"/>
+        <result property="deletedAt" column="DELETED_AT"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+    </resultMap>
+
+    <!-- 회원 정보 삽입 -->
+    <insert id="insert">
+        INSERT INTO Member (EMAIL, PASSWORD, NICKNAME, ROLE, CREATED_AT, UPDATED_AT)
+        VALUES (#{email}, #{password}, #{nickName}, #{role}, now(), now())
+    </insert>
+
+    <!-- 이메일로 회원 정보 조회 -->
+    <select id="findByEmail" resultMap="memberMap">
+        SELECT *
+        FROM Member
+        WHERE EMAIL = #{email}
+    </select>
+
+    <!-- 회원 정보 수정 -->
+    <update id="update">
+        UPDATE Member
+        SET email = #{email},
+            updated_at = now()
+        WHERE MEMBER_ID = #{id}
+    </update>
+
+    <!-- 비밀번호 수정 -->
+    <update id="updatePassword">
+        UPDATE Member
+        SET password = #{newPassword},
+            updated_at = now()
+        WHERE MEMBER_ID = #{id}
+    </update>
+
+</mapper>

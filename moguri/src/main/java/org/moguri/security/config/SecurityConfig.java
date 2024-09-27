@@ -41,10 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationErrorFilter authenticationErrorFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
-
 
     @Autowired
     private JwtUsernamePasswordAuthenticationFilter jwtUsernamePasswordAuthenticationFilter;
@@ -52,7 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder()  // 비밀번호 해싱
+    {
         return new BCryptPasswordEncoder();
     }
 
@@ -66,18 +65,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        // note : 스프링 시큐리티에서 지정한 필터를 기준으로면 끼워넣을 수 있다
         http
-                // 한글 인코딩 필터 설정
+                .cors() // CORS 활성화
+                .and()
                 .addFilterBefore(encodingFilter(), CsrfFilter.class)
-                // 인증 에러 필터
                 .addFilterBefore(authenticationErrorFilter, UsernamePasswordAuthenticationFilter.class)
-                // Jwt 인증 필터
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                // 로그인 인증 필터
                 .addFilterBefore(jwtUsernamePasswordAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-        // UsernamePasswordAuthenticationFilter -> UsernamePasswordAuthenticationToken
-        //
 
         http
                 .exceptionHandling()
@@ -86,52 +80,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         // 경로별 접근 권한 설정
         http
-                .authorizeRequests() // 경로별 접근 권한 설정
+                .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-
-//                .antMatchers(HttpMethod.GET, "/api/member/*").authenticated()
                 .antMatchers(HttpMethod.PUT, "/api/member", "/api/member/*/changepassword").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/member").authenticated()
-
                 .antMatchers(HttpMethod.POST, "/api/board/**").authenticated()
                 .antMatchers(HttpMethod.PUT, "/api/board/**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/board/**").authenticated()
-
                 .anyRequest().permitAll();
 
+
         http
-                .httpBasic().disable() // 기본 HTTP 인증 비활성화
-                .csrf().disable() // CSRF 비활성화
-                .formLogin().disable() // formLogin 비활성화 관련 필터 해제
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 세션 생성 모드 설정
+                .httpBasic().disable()
+                .csrf().disable()
+                .formLogin().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // jwt 기반으로 상태 유지
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
-//        auth.inMemoryAuthentication()
-//                .withUser("admin")
-//                .password("{noop}1234")
-//                .roles("ADMIN", "MEMBER"); // ROLE_ADMIN
-//
-//        auth.inMemoryAuthentication()
-//                .withUser("admin")
-//                .password(passwordEncoder().encode("1234"))
-//                .roles("ADMIN", "MEMBER");
-//
-//        auth.inMemoryAuthentication()
-//                .withUser("member")
-////                .password("{noop}1234")
-//                .password("$2a$10$EsIMfxbJ6NuvwX7MDj4WqOYFzLU9U/lddCyn0nic5dFo3VfJYrXYC")
-//                .roles("MEMBER"); // ROLE_MEMBER
-
-        // in memory user 정보 삭제 → UserDetailsService와 같이 사용 불가
-
-        // 1234 -> 암호화 -> $2a$10$EsIMfxbJ6NuvwX7MDj4WqOYFzLU9U/lddCyn0nic5dFo3VfJYrXYC
-
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-
-
     }
 
     // AuthenticationManager 빈 등록
@@ -146,7 +114,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*");
+        config.addAllowedOriginPattern("*"); // 모든 출처 허용
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
@@ -158,5 +126,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/assets/**", "/*");
     }
-
 }

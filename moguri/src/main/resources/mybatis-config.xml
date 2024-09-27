@@ -13,4 +13,5 @@
         <package name="org.moguri.board.domain"/>
     </typeAliases>
 
+
 </configuration>
