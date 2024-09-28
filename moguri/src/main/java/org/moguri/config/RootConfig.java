@@ -19,9 +19,17 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:application.properties") // Ensure correct path to properties file
-@MapperScan({"org.moguri.member.repository", "org.moguri.login.repository"}) // Ensure this package contains MyBatis mappers
-@ComponentScan({"org.moguri.member.service", "org.moguri.member.repository","org.moguri.login.service"}) // Include all relevant packages
+@PropertySource({"classpath:/application.properties"})
+@MapperScan(basePackages = {"org.moguri.member.repository",
+                            "org.moguri.event.attendance.repository",
+                            "org.moguri.event.quiz.repository",
+                            "org.moguri.accountbook.repository"}
+                            )
+@ComponentScan(basePackages = {"org.moguri.member.service",
+                               "org.moguri.event.attendance.service",
+                               "org.moguri.event.quiz.service",
+                               "org.moguri.accountbook.service"}
+                               )
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {
@@ -54,7 +62,8 @@ public class RootConfig {
     @Bean
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sqlSessionFactory = new SqlSessionFactoryBean();
-        sqlSessionFactory.setConfigLocation(applicationContext.getResource("classpath:mybatis-config.xml"));
+        sqlSessionFactory.setConfigLocation(
+                applicationContext.getResource("classpath:/mybatis-config.xml"));
         sqlSessionFactory.setDataSource(dataSource());
         return sqlSessionFactory.getObject();
     }
