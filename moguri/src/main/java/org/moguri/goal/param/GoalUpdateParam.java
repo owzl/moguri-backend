@@ -14,11 +14,10 @@ import java.util.Date;
 @NoArgsConstructor
 public class GoalUpdateParam {
 
+    private long goalId;
     private String goalName;
     private BigDecimal goalAmount;
     private BigDecimal currentAmount;
     private Date startDate;
     private Date endDate;
-
-
 }

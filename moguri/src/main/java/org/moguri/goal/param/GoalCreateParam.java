@@ -14,6 +14,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 public class GoalCreateParam {
+
     private long memberId;
     private String goalName;
     private BigDecimal goalAmount;

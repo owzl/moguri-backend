@@ -17,6 +17,7 @@ import java.util.Date;
 @RequestMapping("/api/goal")
 @RequiredArgsConstructor
 public class GoalController {
+
     private final GoalService goalService;
 
     @GetMapping("/{goalId}")
@@ -25,26 +26,23 @@ public class GoalController {
         return ApiResponse.of(GoalItem.of(goal));
     }
 
-    @PostMapping("")
+    @PostMapping
     public ApiResponse<?> create(@RequestBody GoalCreateRequest request) {
         GoalCreateParam param = request.convert();
         goalService.create(param);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
-
-    @PatchMapping("/{goalId}") //putmapping이었음
-    public ApiResponse<?> update(@PathVariable("goalId") Long goalId, @RequestBody GoalUpdateRequest request) {
+    @PatchMapping
+    public ApiResponse<?> update(@RequestBody GoalUpdateRequest request) {
         GoalUpdateParam param = request.convert();
-        goalService.update(goalId, param); //새로 추가
+        goalService.update(param); //새로 추가
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
-
-
     @DeleteMapping("/{goalId}") //ok
     public ApiResponse<?> delete(@PathVariable("goalId") Long goalId) {
-        Goal goal = goalService.delete(goalId); //새로 추가
-        return ApiResponse.of(GoalItem.of(goal));
+        goalService.delete(goalId); //새로 추가
+        return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
     @Data
@@ -89,6 +87,7 @@ public class GoalController {
 
     @Data
     private static class GoalUpdateRequest {
+        private long goalId;
         private String goalName;
         private BigDecimal goalAmount;
         private BigDecimal currentAmount;
@@ -97,6 +96,7 @@ public class GoalController {
 
         public GoalUpdateParam convert() {
             GoalUpdateParam param = GoalUpdateParam.builder()
+                    .goalId(goalId)
                     .goalName(goalName)
                     .currentAmount(currentAmount)
                     .startDate(startDate)

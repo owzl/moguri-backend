@@ -26,29 +26,20 @@ public class GoalService {
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
     }
 
-    public Goal update(Long goalId, GoalUpdateParam param) throws MoguriLogicException {
-        Goal goal = getGoal(goalId);
-//    유효성검사
-        if (param.getGoalName() == null) {
-            throw new IllegalArgumentException("Goal name cannot be null");
-        }
-        goal.setGoalName(param.getGoalName());
-        goal.setCurrentAmount(param.getCurrentAmount());
-        goal.setStartDate(param.getStartDate());
-        goal.setEndDate(param.getEndDate());
-        goalMapper.update(goal);
-        return getGoal(goal.getGoalId());
+    public void update(GoalUpdateParam param) {
+        Optional.ofNullable(param.getGoalId())
+                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        goalMapper.update(param);
     }
 
     public void create(GoalCreateParam param) { //goal
         Goal goal = param.toEntity();
         goalMapper.create(goal);
-
     }
 
-    public Goal delete(Long goalId) {
-        Goal goal = getGoal(goalId);
+    public void delete(long goalId) {
+        Optional.ofNullable(goalId)
+                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
         goalMapper.delete(goalId);
-        return goal;
     }
 }
