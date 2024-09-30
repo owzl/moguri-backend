@@ -23,13 +23,16 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = {"org.moguri.member.repository",
                             "org.moguri.event.attendance.repository",
                             "org.moguri.event.quiz.repository",
-                            "org.moguri.accountbook.repository"}
+                            "org.moguri.accountbook.repository",
+                            "org.moguri.goal.repository"}
                             )
 @ComponentScan(basePackages = {"org.moguri.member.service",
                                "org.moguri.event.attendance.service",
                                "org.moguri.event.quiz.service",
-                               "org.moguri.accountbook.service"}
+                               "org.moguri.accountbook.service",
+                               "org.moguri.goal.service"}
                                )
+
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {
