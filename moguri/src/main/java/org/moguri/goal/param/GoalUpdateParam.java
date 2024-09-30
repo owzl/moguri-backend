@@ -1,9 +1,6 @@
 package org.moguri.goal.param;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,9 +9,10 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
+@Data
 public class GoalUpdateParam {
-
     private long goalId;
+    private long memberId;
     private String goalName;
     private BigDecimal goalAmount;
     private BigDecimal currentAmount;

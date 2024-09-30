@@ -29,7 +29,8 @@
 
     <update id="update">
         update Goal
-        set goal_Name      = #{goalName},
+        set member_id      = #{memberId},
+            goal_Name      = #{goalName},
             goal_Amount    = #{goalAmount},
             current_Amount = #{currentAmount},
             start_Date     = #{startDate},

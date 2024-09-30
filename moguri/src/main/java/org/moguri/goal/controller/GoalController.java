@@ -36,12 +36,15 @@ public class GoalController {
     @PatchMapping
     public ApiResponse<?> update(@RequestBody GoalUpdateRequest request) {
         GoalUpdateParam param = request.convert();
-        goalService.update(param); //새로 추가
+        System.out.print(param.toString());
+        goalService.update(param);
         return ApiResponse.of(ReturnCode.SUCCESS);
+
     }
-    @DeleteMapping("/{goalId}") //ok
+
+    @DeleteMapping("/{goalId}")
     public ApiResponse<?> delete(@PathVariable("goalId") Long goalId) {
-        goalService.delete(goalId); //새로 추가
+        goalService.delete(goalId);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
@@ -88,6 +91,7 @@ public class GoalController {
     @Data
     private static class GoalUpdateRequest {
         private long goalId;
+        private long memberId;
         private String goalName;
         private BigDecimal goalAmount;
         private BigDecimal currentAmount;
@@ -97,7 +101,9 @@ public class GoalController {
         public GoalUpdateParam convert() {
             GoalUpdateParam param = GoalUpdateParam.builder()
                     .goalId(goalId)
+                    .memberId(memberId)
                     .goalName(goalName)
+                    .goalAmount(goalAmount)
                     .currentAmount(currentAmount)
                     .startDate(startDate)
                     .endDate(endDate)
