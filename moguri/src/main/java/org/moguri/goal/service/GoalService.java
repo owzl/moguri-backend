@@ -11,6 +11,7 @@ import org.moguri.goal.repository.GoalMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +25,12 @@ public class GoalService {
         Goal goal = goalMapper.getGoal(goalId);
         return Optional.ofNullable(goal)
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+    }
+
+    public List<Goal> getList() {
+        List<Goal> GoalList = goalMapper.getList().stream()
+                .toList();
+        return GoalList;
     }
 
     public void update(GoalUpdateParam param) {

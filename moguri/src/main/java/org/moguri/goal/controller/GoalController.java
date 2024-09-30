@@ -26,6 +26,11 @@ public class GoalController {
         return ApiResponse.of(GoalItem.of(goal));
     }
 
+    @GetMapping
+    public ApiResponse<?> getList() {
+        return ApiResponse.of(goalService.getList());
+    }
+
     @PostMapping
     public ApiResponse<?> create(@RequestBody GoalCreateRequest request) {
         GoalCreateParam param = request.convert();
@@ -55,6 +60,7 @@ public class GoalController {
         private BigDecimal currentAmount;
         private Date startDate;
         private Date endDate;
+        private String goalCategory;
 
         private static GoalItem of(Goal goal) {
             GoalItem converted = new GoalItem();
@@ -62,6 +68,7 @@ public class GoalController {
             converted.currentAmount = goal.getCurrentAmount();
             converted.startDate = goal.getStartDate();
             converted.endDate = goal.getEndDate();
+            converted.goalCategory = goal.getGoalCategory();
             return converted;
         }
     }
@@ -74,6 +81,7 @@ public class GoalController {
         private BigDecimal currentAmount;
         private Date startDate;
         private Date endDate;
+        private String goalCategory;
 
         public GoalCreateParam convert() {
             GoalCreateParam param = GoalCreateParam.builder()
@@ -83,6 +91,7 @@ public class GoalController {
                     .currentAmount(currentAmount)
                     .startDate(startDate)
                     .endDate(endDate)
+                    .goalCategory(goalCategory)
                     .build();
             return param;
         }
@@ -97,6 +106,7 @@ public class GoalController {
         private BigDecimal currentAmount;
         private Date startDate;
         private Date endDate;
+        private String goalCategory;
 
         public GoalUpdateParam convert() {
             GoalUpdateParam param = GoalUpdateParam.builder()
@@ -107,6 +117,7 @@ public class GoalController {
                     .currentAmount(currentAmount)
                     .startDate(startDate)
                     .endDate(endDate)
+                    .goalCategory(goalCategory)
                     .build();
             return param;
         }

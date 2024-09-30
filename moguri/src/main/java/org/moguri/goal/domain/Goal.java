@@ -22,4 +22,5 @@ public class Goal {
     private Date updatedAt;
     private Date startDate;
     private Date endDate;
+    private String goalCategory;
 }
