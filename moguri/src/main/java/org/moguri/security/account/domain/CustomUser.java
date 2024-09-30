@@ -12,13 +12,15 @@ import java.util.Collection;
 public class CustomUser extends User { // 확장
     private MemberVO member; // 실질적인 사용자 데이터
 
-    public CustomUser(String username, String password,
+    // username을 email로 대체
+    public CustomUser(String email, String password,
                       Collection<? extends GrantedAuthority> authorities) {
-        super(username, password, authorities);
+        super(email, password, authorities);
     }
 
+    // MemberVO를 이용한 생성자
     public CustomUser(MemberVO vo) {
-        super(vo.getUsername(), vo.getPassword(), vo.getAuthList());
+        super(vo.getEmail(), vo.getPassword(), vo.getAuthList()); // email 사용
         this.member = vo;
     }
 }

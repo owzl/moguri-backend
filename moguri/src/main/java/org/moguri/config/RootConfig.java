@@ -20,22 +20,37 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"})
-@MapperScan(basePackages = {"org.moguri.member.repository", "org.moguri.goal.repository"})
-@ComponentScan(basePackages = {"org.moguri.member.service", "org.moguri.goal.service"})
+@MapperScan(basePackages = {"org.moguri.member.repository",
+                            "org.moguri.event.attendance.repository",
+                            "org.moguri.event.quiz.repository",
+                            "org.moguri.accountbook.repository",
+                            "org.moguri.goal.repository"}
+                            )
+@ComponentScan(basePackages = {"org.moguri.member.service",
+                               "org.moguri.event.attendance.service",
+                               "org.moguri.event.quiz.service",
+                               "org.moguri.accountbook.service",
+                               "org.moguri.goal.service"}
+                               )
+
 @Slf4j
 @EnableTransactionManagement
 public class RootConfig {
+
     @Value("${jdbc.driver}")
-    String driver;
+    private String driver;
+
     @Value("${jdbc.url}")
-    String url;
+    private String url;
+
     @Value("${jdbc.username}")
-    String username;
+    private String username;
+
     @Value("${jdbc.password}")
-    String password;
+    private String password;
 
     @Autowired
-    ApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     @Bean
     public DataSource dataSource() {
@@ -44,8 +59,7 @@ public class RootConfig {
         config.setJdbcUrl(url);
         config.setUsername(username);
         config.setPassword(password);
-        HikariDataSource dataSource = new HikariDataSource(config);
-        return dataSource;
+        return new HikariDataSource(config);
     }
 
     @Bean
@@ -59,7 +73,6 @@ public class RootConfig {
 
     @Bean
     public DataSourceTransactionManager transactionManager() {
-        DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource());
-        return manager;
+        return new DataSourceTransactionManager(dataSource());
     }
 }

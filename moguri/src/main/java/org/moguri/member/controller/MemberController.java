@@ -7,10 +7,14 @@ import org.moguri.common.response.ApiResponse;
 
 import lombok.Data;
 
+import org.moguri.common.response.MoguriPage;
+import org.moguri.common.response.PageRequest;
+import org.moguri.common.validator.PageLimitSizeValidator;
 import org.moguri.member.domain.Member;
 import org.moguri.member.param.MemberCreateParam;
 import org.moguri.member.param.MemberUpdateParam;
 import org.moguri.member.service.MemberService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/members")
@@ -29,21 +33,23 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    /**
-     * 페이징 처리 고민중 추후 구현
-     */
-//    @GetMapping
-//    public ApiResponse<?> getMembers(MemberGetRequest request) {
-//        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
-//        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
-//
-//        Stream<MemberItem> members = memberService.getMembers(pageRequest).stream().map(MemberItem::of);
-//        members = members;
-//        return ApiResponse.of(MoguriPage.of(members));
-//    }
+    private final PasswordEncoder passwordEncoder;
+
+    @GetMapping
+    public ApiResponse<?> getMembers(MemberGetRequest request) {
+        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
+
+        List<Member> members = memberService.getMembers(pageRequest);
+        int totalCount = memberService.getTotalCount();
+
+        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount,
+                members.stream().map(MemberItem::of).toList()));
+    }
+
     @PostMapping
     public ApiResponse<?> create(@RequestBody MemberCreateRequest request) {
-        MemberCreateParam param = request.convert();
+        MemberCreateParam param = request.convert(passwordEncoder);
         memberService.save(param);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
@@ -54,16 +60,16 @@ public class MemberController {
         return ApiResponse.of(MemberItem.of(member));
     }
 
-    @DeleteMapping("/{id}")
-    public ApiResponse<?> delete(@PathVariable("id") Long id) {
-        //memberService.remove(loginMember, id);
-        return ApiResponse.of(ReturnCode.SUCCESS);
-    }
-
     @PatchMapping("/{id}")
     public ApiResponse<?> update(@PathVariable("id") Long id, @RequestBody MemberUpdateRequest request) {
         MemberUpdateParam param = request.convert();
-        //memberService.update(loginMember, id, param);
+        memberService.update(id, param);
+        return ApiResponse.of(ReturnCode.SUCCESS);
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<?> delete(@PathVariable("id") Long id) {
+        memberService.remove(id);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
@@ -102,10 +108,10 @@ public class MemberController {
 
         private String nickName;
 
-        public MemberCreateParam convert() {
+        public MemberCreateParam convert(PasswordEncoder passwordEncoder) {
             MemberCreateParam param = MemberCreateParam.builder()
                     .email(email)
-                    .password(password)
+                    .password(passwordEncoder.encode(password))
                     .nickName(nickName)
                     .build();
             return param;
