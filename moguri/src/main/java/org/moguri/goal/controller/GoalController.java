@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.ApiResponse;
 import lombok.Data;
+import org.moguri.common.response.MoguriPage;
+import org.moguri.common.response.PageRequest;
+import org.moguri.common.validator.PageLimitSizeValidator;
 import org.moguri.goal.domain.Goal;
 import org.moguri.goal.param.GoalCreateParam;
 import org.moguri.goal.param.GoalUpdateParam;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/goal")
@@ -24,6 +28,17 @@ public class GoalController {
     public ApiResponse<?> getGoal(@PathVariable("goalId") long goalId) {
         Goal goal = goalService.getGoal(goalId);
         return ApiResponse.of(GoalItem.of(goal));
+    }
+
+    //getList
+    @GetMapping
+    public ApiResponse<?> getList(GoalGetRequest request) {
+        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
+
+        List<Goal> goals = goalService.getList(pageRequest);
+        int totalCount = goalService.getTotalCount();
+        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount, goals.stream().map(GoalItem::of).toList()));
     }
 
     @PostMapping
@@ -48,6 +63,12 @@ public class GoalController {
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
+    @Data //paginaiton
+    private static class GoalGetRequest {
+        private int page = 0;
+        private int limit = 30;
+    }
+
     @Data
     private static class GoalItem {
         private String goalName;
@@ -55,6 +76,7 @@ public class GoalController {
         private BigDecimal currentAmount;
         private Date startDate;
         private Date endDate;
+        private String goalCategory;
 
         private static GoalItem of(Goal goal) {
             GoalItem converted = new GoalItem();
@@ -62,6 +84,7 @@ public class GoalController {
             converted.currentAmount = goal.getCurrentAmount();
             converted.startDate = goal.getStartDate();
             converted.endDate = goal.getEndDate();
+            converted.goalCategory = goal.getGoalCategory();
             return converted;
         }
     }
@@ -74,6 +97,7 @@ public class GoalController {
         private BigDecimal currentAmount;
         private Date startDate;
         private Date endDate;
+        private String goalCategory;
 
         public GoalCreateParam convert() {
             GoalCreateParam param = GoalCreateParam.builder()
@@ -83,6 +107,7 @@ public class GoalController {
                     .currentAmount(currentAmount)
                     .startDate(startDate)
                     .endDate(endDate)
+                    .goalCategory(goalCategory)
                     .build();
             return param;
         }
@@ -97,6 +122,7 @@ public class GoalController {
         private BigDecimal currentAmount;
         private Date startDate;
         private Date endDate;
+        private String goalCategory;
 
         public GoalUpdateParam convert() {
             GoalUpdateParam param = GoalUpdateParam.builder()
@@ -107,6 +133,7 @@ public class GoalController {
                     .currentAmount(currentAmount)
                     .startDate(startDate)
                     .endDate(endDate)
+                    .goalCategory(goalCategory)
                     .build();
             return param;
         }

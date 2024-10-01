@@ -1,7 +1,10 @@
 package org.moguri.goal.repository;
 
+import org.moguri.common.response.PageRequest;
 import org.moguri.goal.domain.Goal;
 import org.moguri.goal.param.GoalUpdateParam;
+
+import java.util.List;
 
 public interface GoalMapper {
     Goal getGoal(long goalId);
@@ -12,4 +15,7 @@ public interface GoalMapper {
 
     long delete(long goalId);
 
+    List<Goal> findAll(PageRequest pageRequest);
+
+    int getTotalCount();
 }

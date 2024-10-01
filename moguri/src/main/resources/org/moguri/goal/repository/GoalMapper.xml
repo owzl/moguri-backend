@@ -14,6 +14,7 @@
         <result column="updated_At" property="updatedAt"></result>
         <result column="start_Date" property="startDate"></result>
         <result column="end_Date" property="endDate"></result>
+        <result column="goal_Category" property="goalCategory"></result>
     </resultMap>
 
     <select id="getGoal" resultMap="GoalMap">
@@ -22,9 +23,25 @@
         WHERE goal_Id = #{goalId}
     </select>
 
+    <select id="findAll" resultType="org.moguri.goal.domain.Goal">
+        <![CDATA[
+        SELECT *
+        FROM Goal
+        ORDER BY created_At DESC
+            LIMIT #{page}
+        OFFSET #{limit}
+        ]]>
+    </select>
+    <select id="getTotalCount" resultType="java.lang.Integer">
+        select count(*)
+        from Goal
+    </select>
+
     <insert id="create">
-        insert into Goal (member_id, goal_Name, goal_Amount, current_Amount, created_At, start_Date, end_Date)
-        values (#{memberId}, #{goalName}, #{goalAmount}, #{currentAmount}, now(), #{startDate}, #{endDate})
+        insert into Goal (member_id, goal_Name, goal_Amount, current_Amount, created_At, start_Date, end_Date,
+                          goal_Category)
+        values (#{memberId}, #{goalName}, #{goalAmount}, #{currentAmount}, now(), #{startDate}, #{endDate},
+                #{goalCategory})
     </insert>
 
     <update id="update">
@@ -35,7 +52,8 @@
             current_Amount = #{currentAmount},
             start_Date     = #{startDate},
             end_Date       = #{endDate},
-            updated_At     = now()
+            updated_At     = now(),
+            goal_Cateogry  = #{goalCategory}
         where goal_Id = #{goalId}
     </update>
 

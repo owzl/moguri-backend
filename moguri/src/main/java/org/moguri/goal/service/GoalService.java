@@ -2,6 +2,7 @@ package org.moguri.goal.service;
 
 import lombok.RequiredArgsConstructor;
 import org.moguri.common.enums.ReturnCode;
+import org.moguri.common.response.PageRequest;
 import org.moguri.exception.MoguriLogicException;
 import org.moguri.goal.domain.Goal;
 import org.moguri.goal.param.GoalCreateParam;
@@ -11,6 +12,7 @@ import org.moguri.goal.repository.GoalMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,6 +26,15 @@ public class GoalService {
         Goal goal = goalMapper.getGoal(goalId);
         return Optional.ofNullable(goal)
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+    }
+
+    @Transactional(readOnly = true) //list조회 및 페이지네이션
+    public List<Goal> getList(PageRequest pageRequest) {
+        return goalMapper.findAll(pageRequest);
+    }
+
+    public int getTotalCount() {
+        return goalMapper.getTotalCount();
     }
 
     public void update(GoalUpdateParam param) {

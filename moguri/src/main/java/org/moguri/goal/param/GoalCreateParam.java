@@ -21,6 +21,7 @@ public class GoalCreateParam {
     private BigDecimal currentAmount;
     private Date startDate;
     private Date endDate;
+    private String goalCategory;
 
     public Goal toEntity() {
         Goal goal = Goal.builder()
@@ -29,7 +30,8 @@ public class GoalCreateParam {
                 .goalAmount(goalAmount)
                 .currentAmount(currentAmount)
                 .startDate(startDate)
-                .endDate(endDate).build();
+                .endDate(endDate)
+                .goalCategory(goalCategory).build();
         return goal;
     }
 }
