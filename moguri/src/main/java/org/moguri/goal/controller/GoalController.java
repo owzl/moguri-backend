@@ -84,6 +84,7 @@ public class GoalController {
         private static GoalItem of(Goal goal) {
             GoalItem converted = new GoalItem();
             converted.goalName = goal.getGoalName();
+            converted.goalAmount = goal.getGoalAmount();
             converted.currentAmount = goal.getCurrentAmount();
             converted.startDate = goal.getStartDate();
             converted.endDate = goal.getEndDate();
