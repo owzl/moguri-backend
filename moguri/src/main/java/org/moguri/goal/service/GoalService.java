@@ -2,6 +2,7 @@ package org.moguri.goal.service;
 
 import lombok.RequiredArgsConstructor;
 import org.moguri.common.enums.ReturnCode;
+import org.moguri.common.response.PageRequest;
 import org.moguri.exception.MoguriLogicException;
 import org.moguri.goal.domain.Goal;
 import org.moguri.goal.param.GoalCreateParam;
@@ -27,10 +28,13 @@ public class GoalService {
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
     }
 
-    public List<Goal> getList() {
-        List<Goal> GoalList = goalMapper.getList().stream()
-                .toList();
-        return GoalList;
+    @Transactional(readOnly = true) //list조회 및 페이지네이션
+    public List<Goal> getList(PageRequest pageRequest) {
+        return goalMapper.findAll(pageRequest);
+    }
+
+    public int getTotalCount() {
+        return goalMapper.getTotalCount();
     }
 
     public void update(GoalUpdateParam param) {

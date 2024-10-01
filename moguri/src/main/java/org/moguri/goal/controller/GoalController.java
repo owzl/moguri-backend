@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.ApiResponse;
 import lombok.Data;
+import org.moguri.common.response.MoguriPage;
+import org.moguri.common.response.PageRequest;
+import org.moguri.common.validator.PageLimitSizeValidator;
 import org.moguri.goal.domain.Goal;
 import org.moguri.goal.param.GoalCreateParam;
 import org.moguri.goal.param.GoalUpdateParam;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/goal")
@@ -26,9 +30,15 @@ public class GoalController {
         return ApiResponse.of(GoalItem.of(goal));
     }
 
+    //getList
     @GetMapping
-    public ApiResponse<?> getList() {
-        return ApiResponse.of(goalService.getList());
+    public ApiResponse<?> getList(GoalGetRequest request) {
+        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
+
+        List<Goal> goals = goalService.getList(pageRequest);
+        int totalCount = goalService.getTotalCount();
+        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount, goals.stream().map(GoalItem::of).toList()));
     }
 
     @PostMapping
@@ -51,6 +61,12 @@ public class GoalController {
     public ApiResponse<?> delete(@PathVariable("goalId") Long goalId) {
         goalService.delete(goalId);
         return ApiResponse.of(ReturnCode.SUCCESS);
+    }
+
+    @Data //paginaiton
+    private static class GoalGetRequest {
+        private int page = 0;
+        private int limit = 30;
     }
 
     @Data
