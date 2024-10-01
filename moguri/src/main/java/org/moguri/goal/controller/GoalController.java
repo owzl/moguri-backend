@@ -1,5 +1,6 @@
 package org.moguri.goal.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.RequiredArgsConstructor;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.ApiResponse;
@@ -74,7 +75,9 @@ public class GoalController {
         private String goalName;
         private BigDecimal goalAmount;
         private BigDecimal currentAmount;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private Date startDate;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private Date endDate;
         private String goalCategory;
 
