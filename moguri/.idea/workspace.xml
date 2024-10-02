@@ -39,6 +39,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -72,36 +73,37 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Build moguri.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "Tomcat Server.Tomcat 9.0.94.executor": "Run",
-    "Tomcat Server.Tomcat 9.0.95.executor": "Run",
-    "git-widget-placeholder": "dev",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/asthu/Desktop/final_project/moguri",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Build moguri.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;Tomcat Server.Tomcat 9.0.94.executor&quot;: &quot;Run&quot;,
+    &quot;Tomcat Server.Tomcat 9.0.95.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;MOGURI-5&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/asthu/Desktop/final_project/moguri&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.moguri.security.oauth" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="Tomcat 9.0.94" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 9.0.94" ALTERNATIVE_JRE_ENABLED="false" nameIsGenerated="true">
       <option name="BROWSER_ID" value="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" />
       <option name="UPDATING_POLICY" value="restart-server" />
       <deployment>
-        <artifact name="Gradle : org.scoula : backend-1.0-SNAPSHOT.war">
-          <settings>
-            <option name="CONTEXT_PATH" value="/" />
-          </settings>
-        </artifact>
         <artifact name="Gradle : org.scoula : Moguri-1.0-SNAPSHOT.war">
           <settings>
             <option name="CONTEXT_PATH" value="/" />
@@ -183,6 +185,7 @@
         <option name="Make" enabled="true" />
         <option name="BuildArtifacts" enabled="true">
           <artifact name="Gradle : org.scoula : backend-1.0-SNAPSHOT.war" />
+          <artifact name="Gradle : org.scoula : Moguri-1.0-SNAPSHOT.war" />
         </option>
       </method>
     </configuration>
@@ -206,6 +209,11 @@
       <workItem from="1726118516014" duration="55393000" />
       <workItem from="1727427242942" duration="5169000" />
       <workItem from="1727487649528" duration="1173000" />
+      <workItem from="1727670449447" duration="1366000" />
+      <workItem from="1727671836905" duration="921000" />
+      <workItem from="1727672935812" duration="10088000" />
+      <workItem from="1727750001001" duration="8870000" />
+      <workItem from="1727764055705" duration="7495000" />
     </task>
     <task id="LOCAL-00001" summary="[MOGURI-5] add : security,member CRUD 구현">
       <option name="closed" value="true" />
@@ -224,5 +232,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="[MOGURI-5] add : security,member CRUD 구현" />
     <option name="LAST_COMMIT_MESSAGE" value="[MOGURI-5] add : security,member CRUD 구현" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
