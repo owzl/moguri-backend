@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.goal.repository.GoalQuestMapper">
+
+    <resultMap id="goalQuestMap" type="GoalQuest">
+        <id column="" property="questId" />
+        <result column="quest_id" property="questTitle"/>
+        <result column="quest_title" property="questDescription"/>
+        <result column="quest_description" property="categoryId"/>
+        <result column="category_id" property="targetAmount"/>
+        <result column="target_amount" property="currentAmount"/>
+        <result column="current_amount" property="questDays"/>
+        <result column="reward_amount" property="rewardAmount"/>
+    </resultMap>
+
+    <!-- 목표 퀘스트 리스트 조회 -->
+    <select id="getGoalQuests" parameterType="org.moguri.common.response.PageRequest" resultType="GoalQuest">
+        <![CDATA[
+        SELECT *
+        FROM GoalQuest
+        ORDER BY quest_id DESC
+            LIMIT #{limit} OFFSET #{offset}
+        ]]>
+    </select>
+
+    <!-- 목표 퀘스트 개수 - 페이징 -->
+    <select id="getTotalGoalQuestsCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM GoalQuest
+    </select>
+
+</mapper>

@@ -14,5 +14,6 @@
         <package name="org.moguri.event.attendance.domain"/>
         <package name="org.moguri.event.quiz.domain"/>
         <package name="org.moguri.accountbook.domain"/>
+        <package name="org.moguri.goal.domain"/>
     </typeAliases>
 </configuration>

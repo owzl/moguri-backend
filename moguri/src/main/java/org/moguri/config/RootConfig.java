@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource({"classpath:/application.properties"})
+@PropertySource({"classpath:/application.properties", "classpath:/application-secret.properties"})
 @MapperScan(basePackages = {"org.moguri.member.repository",
                             "org.moguri.event.attendance.repository",
                             "org.moguri.event.quiz.repository",

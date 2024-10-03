@@ -23,15 +23,6 @@
         WHERE goal_Id = #{goalId}
     </select>
 
-<!--    <select id="findAll" resultType="org.moguri.goal.domain.Goal">-->
-<!--        <![CDATA[-->
-<!--        SELECT *-->
-<!--        FROM Goal-->
-<!--        ORDER BY created_At DESC-->
-<!--            LIMIT #{page}-->
-<!--        OFFSET #{limit}-->
-<!--        ]]>-->
-<!--    </select>-->
     <select id="findAll" resultType="org.moguri.goal.domain.Goal">
         <![CDATA[
         SELECT *
