@@ -5,7 +5,7 @@ build/
 !**/src/test/**/build/
 application-secret.properties
 
-### IntelliJ IDEA ###
+### IntelliJ IDEA ###        ㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜㅜ
 .idea/
 .idea/modules.xml
 .idea/jarRepositories.xml

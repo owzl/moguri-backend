@@ -25,6 +25,12 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
+    //RestTemplate 사용에 필요
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    // Spring Data Redis
+    implementation 'org.springframework.data:spring-data-redis:2.7.2' // 최신 버전의 Spring Data Redis
+    implementation 'io.lettuce:lettuce-core:6.4.0.RELEASE' // 최신 버전의 Lettuce
+
     // Spring
     implementation("org.springframework:spring-context:${springVersion}")
             { exclude group: 'commons-logging', module: 'commons-logging' }
