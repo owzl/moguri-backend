@@ -31,21 +31,24 @@ public class GoalController {
         return ApiResponse.of(GoalItem.of(goal));
     }
 
-    //getList
+    // 목표 목록 조회
     @GetMapping
     public ApiResponse<?> getList(GoalGetRequest request) {
         PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
 
         List<Goal> goals = goalService.getList(pageRequest);
+
         int totalCount = goalService.getTotalCount();
         return ApiResponse.of(MoguriPage.of(pageRequest, totalCount, goals.stream().map(GoalItem::of).toList()));
     }
 
+    // 목표 추가
     @PostMapping
     public ApiResponse<?> create(@RequestBody GoalCreateRequest request) {
         GoalCreateParam param = request.convert();
         goalService.create(param);
+
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
@@ -64,6 +67,7 @@ public class GoalController {
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
+
     @Data //paginaiton
     private static class GoalGetRequest {
         private int page = 0;
@@ -75,6 +79,7 @@ public class GoalController {
         private String goalName;
         private BigDecimal goalAmount;
         private BigDecimal currentAmount;
+        private BigDecimal targetPercent;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private Date startDate;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
@@ -86,6 +91,7 @@ public class GoalController {
             converted.goalName = goal.getGoalName();
             converted.goalAmount = goal.getGoalAmount();
             converted.currentAmount = goal.getCurrentAmount();
+            converted.targetPercent = goal.getTargetPercent();
             converted.startDate = goal.getStartDate();
             converted.endDate = goal.getEndDate();
             converted.goalCategory = goal.getGoalCategory();
@@ -99,6 +105,7 @@ public class GoalController {
         private String goalName;
         private BigDecimal goalAmount;
         private BigDecimal currentAmount;
+        private BigDecimal targetPercent;
         private Date startDate;
         private Date endDate;
         private String goalCategory;
@@ -109,6 +116,7 @@ public class GoalController {
                     .goalName(goalName)
                     .goalAmount(goalAmount)
                     .currentAmount(currentAmount)
+                    .targetPercent(targetPercent)
                     .startDate(startDate)
                     .endDate(endDate)
                     .goalCategory(goalCategory)
@@ -124,6 +132,7 @@ public class GoalController {
         private String goalName;
         private BigDecimal goalAmount;
         private BigDecimal currentAmount;
+        private BigDecimal targetPercent;
         private Date startDate;
         private Date endDate;
         private String goalCategory;
@@ -135,6 +144,7 @@ public class GoalController {
                     .goalName(goalName)
                     .goalAmount(goalAmount)
                     .currentAmount(currentAmount)
+                    .targetPercent(targetPercent)
                     .startDate(startDate)
                     .endDate(endDate)
                     .goalCategory(goalCategory)

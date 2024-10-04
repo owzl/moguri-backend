@@ -19,6 +19,7 @@ public class GoalCreateParam {
     private String goalName;
     private BigDecimal goalAmount;
     private BigDecimal currentAmount;
+    private BigDecimal targetPercent;
     private Date startDate;
     private Date endDate;
     private String goalCategory;
@@ -29,6 +30,7 @@ public class GoalCreateParam {
                 .goalName(goalName)
                 .goalAmount(goalAmount)
                 .currentAmount(currentAmount)
+                .targetPercent(targetPercent)
                 .startDate(startDate)
                 .endDate(endDate)
                 .goalCategory(goalCategory).build();

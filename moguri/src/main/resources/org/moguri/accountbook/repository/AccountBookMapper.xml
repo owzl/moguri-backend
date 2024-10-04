@@ -92,6 +92,15 @@
         WHERE accountbook_id = #{accountBookId}
     </delete>
 
+    <!-- 특정 카테고리와 월, 년에 따른 총 지출을 계산(current_amount, goal_amount 계산용 공용 쿼리) -->
+    <!--<select id="getTotalSpendingForGoal" resultType="java.math.BigDecimal">
+        SELECT SUM(amount)
+        FROM AccountBook
+        WHERE category = (SELECT goal_category FROM Goal WHERE goal_id = #{goalId})
+            AND member_id = #{memberId}
+            AND MONTH(transaction_date) = #{month}
+          AND YEAR(transaction_date) = #{year}
+    </select>-->
 
 
 </mapper>

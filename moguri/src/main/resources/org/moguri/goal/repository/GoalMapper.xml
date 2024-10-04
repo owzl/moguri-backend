@@ -10,11 +10,13 @@
         <result column="goal_Name" property="goalName"></result>
         <result column="goal_Amount" property="goalAmount"></result>
         <result column="current_Amount" property="currentAmount"></result>
+        <result column="target_percent" property="targetPercent"></result>
         <result column="created_At" property="createdAt"></result>
         <result column="updated_At" property="updatedAt"></result>
         <result column="start_Date" property="startDate"></result>
         <result column="end_Date" property="endDate"></result>
         <result column="goal_Category" property="goalCategory"></result>
+        <result column="target_percent" property="goalCategory"></result>
     </resultMap>
 
     <select id="getGoal" resultMap="GoalMap">
@@ -39,10 +41,8 @@
     </select>
 
     <insert id="create">
-        insert into Goal (member_id, goal_Name, goal_Amount, current_Amount, created_At, start_Date, end_Date,
-                          goal_Category)
-        values (#{memberId}, #{goalName}, #{goalAmount}, #{currentAmount}, now(), #{startDate}, #{endDate},
-                #{goalCategory})
+        insert into Goal (member_id, goal_Name, goal_Amount, current_Amount, target_percent, created_At, start_Date, end_Date, goal_Category)
+        values (#{memberId}, #{goalName}, #{goalAmount}, #{currentAmount}, #{targetPercent}, now(), #{startDate}, #{endDate}, #{goalCategory})
     </insert>
 
     <update id="update">
@@ -51,6 +51,7 @@
             goal_Name      = #{goalName},
             goal_Amount    = #{goalAmount},
             current_Amount = #{currentAmount},
+            target_percent  = #{targetPercent},
             start_Date     = #{startDate},
             end_Date       = #{endDate},
             updated_At     = now(),

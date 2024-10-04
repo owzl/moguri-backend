@@ -1,6 +1,8 @@
 package org.moguri.goal.service;
 
 import lombok.RequiredArgsConstructor;
+import org.moguri.accountbook.domain.AccountBook;
+import org.moguri.accountbook.service.AccountBookService;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.PageRequest;
 import org.moguri.exception.MoguriLogicException;
@@ -12,6 +14,8 @@ import org.moguri.goal.repository.GoalMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +25,7 @@ import java.util.Optional;
 public class GoalService {
 
     final private GoalMapper goalMapper;
+    private final AccountBookService accountBookService;
 
     public Goal getGoal(Long goalId) {
         Goal goal = goalMapper.getGoal(goalId);
@@ -54,4 +59,8 @@ public class GoalService {
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
         goalMapper.delete(goalId);
     }
+
+
+
+
 }
