@@ -23,12 +23,7 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Moguri" type="f1a62948:ProjectNode" />
-              </path>
-            </expand>
+            <expand />
             <select />
           </tree_state>
         </projects_view>
@@ -73,27 +68,27 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.Build moguri.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;Tomcat Server.Tomcat 9.0.94.executor&quot;: &quot;Run&quot;,
-    &quot;Tomcat Server.Tomcat 9.0.95.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;MOGURI-5&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/asthu/Desktop/final_project/moguri&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Build moguri.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Tomcat Server.Tomcat 9.0.94.executor": "Run",
+    "Tomcat Server.Tomcat 9.0.95.executor": "Run",
+    "git-widget-placeholder": "MOGURI-9",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/asthu/Desktop/final_project/moguri",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="org.moguri.security.oauth" />
@@ -214,6 +209,7 @@
       <workItem from="1727672935812" duration="10088000" />
       <workItem from="1727750001001" duration="8870000" />
       <workItem from="1727764055705" duration="7495000" />
+      <workItem from="1728018075056" duration="7221000" />
     </task>
     <task id="LOCAL-00001" summary="[MOGURI-5] add : security,member CRUD 구현">
       <option name="closed" value="true" />
@@ -232,6 +228,14 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="[MOGURI-5] add : security,member CRUD 구현" />
     <option name="LAST_COMMIT_MESSAGE" value="[MOGURI-5] add : security,member CRUD 구현" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory">
+        <watch expression="param" />
+        <watch expression="param" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -7,16 +7,16 @@
 
     <!-- 전체 멤버 조회 쿼리 -->
     <select id="findAll" resultType="Member">
-        SELECT id,
+        SELECT member_Id,
                email,
                password,
                nickName,
-               cottonCandy,
+               cotton_Candy,
                role,
-               createdAt,
-               updatedAt,
-               deletedAt
-        FROM member
+               created_At,
+               updated_At,
+               deleted_At
+        FROM Member
         ORDER BY createdAt DESC
             LIMIT #{page}
         OFFSET #{limit}
@@ -25,7 +25,7 @@
     <!-- 총 멤버 수 조회 쿼리 -->
     <select id="getTotalCount" resultType="int">
         SELECT COUNT(*)
-        FROM member
+        FROM Member
     </select>
 
     <!-- 멤버 저장 쿼리 -->
@@ -36,36 +36,42 @@
 
     <!-- ID로 멤버 조회 쿼리 -->
     <select id="findById" resultType="Member">
-        SELECT id,
+        SELECT member_Id,
                email,
                password,
                nickName,
-               cottonCandy,
+               cotton_Candy,
                role,
-               createdAt,
-               updatedAt,
-               deletedAt
-        FROM member
-        WHERE id = #{id}
+               created_At,
+               updated_At,
+               deleted_At
+        FROM Member
+        WHERE member_Id = #{id}
     </select>
 
     <!-- 멤버 정보 수정 쿼리 -->
     <update id="update">
-        UPDATE member
-        SET email       = #{param.email},
-            password    = #{param.password},
-            nickName    = #{param.nickName},
-            cottonCandy = #{param.cottonCandy},
-            role        = #{param.role},
-            updatedAt   = NOW()
-        WHERE id = #{id}
+        UPDATE Member
+        SET email       = #{email},
+            password    = #{password},
+            nickName    = #{nickName},
+            cotton_Candy = #{cottonCandy},
+            role        = #{role},
+            updated_At   = NOW()
+        WHERE member_Id = #{id}
     </update>
-
+    <!-- 코튼 캔디 전용 업데이트 쿼리 추가 -->
+    <update id="updateCottonCandy">
+        UPDATE Member
+        SET cotton_Candy = #{cottonCandy},
+            updated_At   = NOW()
+        WHERE member_Id = #{id}
+    </update>
     <!-- 멤버 삭제 쿼리 (소프트 삭제) -->
     <update id="delete">
-        UPDATE member
-        SET deletedAt = NOW()
-        WHERE id = #{id}
+        UPDATE Member
+        SET deleted_At = NOW()
+        WHERE member_Id  = #{memberId}
     </update>
 
 </mapper>
