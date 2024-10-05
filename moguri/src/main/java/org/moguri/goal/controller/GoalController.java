@@ -52,7 +52,7 @@ public class GoalController {
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
-    @PatchMapping
+    @PatchMapping("/{goalId}")
     public ApiResponse<?> update(@RequestBody GoalUpdateRequest request) {
         GoalUpdateParam param = request.convert();
         System.out.print(param.toString());
@@ -76,6 +76,7 @@ public class GoalController {
 
     @Data
     private static class GoalItem {
+        private long goalId;
         private String goalName;
         private BigDecimal goalAmount;
         private BigDecimal currentAmount;
@@ -89,6 +90,7 @@ public class GoalController {
 
         private static GoalItem of(Goal goal) {
             GoalItem converted = new GoalItem();
+            converted.goalId = goal.getGoalId();
             converted.goalName = goal.getGoalName();
             converted.goalAmount = goal.getGoalAmount();
             converted.currentAmount = goal.getCurrentAmount();

@@ -46,7 +46,6 @@ public class GoalService {
         Optional.ofNullable(param.getGoalId())
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
         goalMapper.update(param);
-
     }
 
     public void create(GoalCreateParam param) {
