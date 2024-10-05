@@ -5,22 +5,33 @@
 <mapper namespace="org.moguri.goal.repository.GoalQuestMapper">
 
     <resultMap id="goalQuestMap" type="GoalQuest">
-        <id column="" property="questId" />
-        <result column="quest_id" property="questTitle"/>
-        <result column="quest_title" property="questDescription"/>
-        <result column="quest_description" property="categoryId"/>
-        <result column="category_id" property="targetAmount"/>
-        <result column="target_amount" property="currentAmount"/>
-        <result column="current_amount" property="questDays"/>
+        <id column="quest_id" property="questId"/>
+        <result column="quest_title" property="questTitle"/>
+        <result column="quest_description" property="questDescription"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/> <!-- 카테고리 이름 추가 -->
+        <result column="target_amount" property="targetAmount"/>
+        <result column="current_amount" property="currentAmount"/>
+        <result column="quest_days" property="questDays"/>
         <result column="reward_amount" property="rewardAmount"/>
     </resultMap>
 
     <!-- 목표 퀘스트 리스트 조회 -->
     <select id="getGoalQuests" parameterType="org.moguri.common.response.PageRequest" resultType="GoalQuest">
         <![CDATA[
-        SELECT *
-        FROM GoalQuest
-        ORDER BY quest_id DESC
+        SELECT
+            GQ.QUEST_ID,
+            GQ.QUEST_TITLE,
+            GQ.QUEST_DESCRIPTION,
+            GQ.CATEGORY_ID,
+            C.CATEGORY_NAME,  -- 카테고리 이름 추가
+            GQ.TARGET_AMOUNT,
+            GQ.CURRENT_AMOUNT,
+            GQ.QUEST_DAYS,
+            GQ.REWARD_AMOUNT
+        FROM GoalQuest GQ
+                 JOIN Category C ON GQ.CATEGORY_ID = C.CATEGORY_ID
+        ORDER BY GQ.QUEST_ID DESC
             LIMIT #{limit} OFFSET #{offset}
         ]]>
     </select>

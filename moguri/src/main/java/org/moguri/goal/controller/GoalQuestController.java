@@ -53,6 +53,7 @@ public class GoalQuestController {
         private String questTitle;
         private String questDescription;
         private long categoryId;  // Category와 연결
+        private String categoryName; // 카테고리 이름 추가
         private BigDecimal targetAmount;
         private BigDecimal currentAmount;
         private int questDays;
@@ -64,6 +65,7 @@ public class GoalQuestController {
             converted.questTitle = goalQuest.getQuestTitle();
             converted.questDescription = goalQuest.getQuestDescription();
             converted.categoryId = goalQuest.getCategoryId();
+            converted.categoryName = goalQuest.getCategoryName();
             converted.targetAmount = goalQuest.getTargetAmount();
             converted.currentAmount = goalQuest.getCurrentAmount();
             converted.questDays = goalQuest.getQuestDays();

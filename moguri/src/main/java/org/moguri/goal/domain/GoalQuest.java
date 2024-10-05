@@ -15,10 +15,10 @@ public class GoalQuest {
     private long questId;
     private String questTitle;
     private String questDescription;
-    private long categoryId;  // Category와 연결
+    private int categoryId;
+    private String categoryName; // 카테고리 이름 추가
     private BigDecimal targetAmount;
     private BigDecimal currentAmount;
     private int questDays;
     private BigDecimal rewardAmount;
-
 }
