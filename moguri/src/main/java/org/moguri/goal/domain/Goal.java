@@ -24,5 +24,6 @@ public class Goal {
     private Date startDate;
     private Date endDate;
     private String goalCategory;
+    private BigDecimal rewardAmount;
 
 }

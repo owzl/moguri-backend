@@ -17,6 +17,7 @@
         <result column="end_Date" property="endDate"></result>
         <result column="goal_Category" property="goalCategory"></result>
         <result column="target_percent" property="goalCategory"></result>
+        <result column="reward_amount" property="rewardAmount"></result>
     </resultMap>
 
     <select id="getGoal" resultMap="GoalMap">
@@ -41,21 +42,22 @@
     </select>
 
     <insert id="create">
-        insert into Goal (member_id, goal_Name, goal_Amount, current_Amount, target_percent, created_At, start_Date, end_Date, goal_Category)
-        values (#{memberId}, #{goalName}, #{goalAmount}, #{currentAmount}, #{targetPercent}, now(), #{startDate}, #{endDate}, #{goalCategory})
+        insert into Goal (member_id, goal_Name, goal_Amount, current_Amount, target_percent, created_At, start_Date, end_Date, goal_Category, reward_amount)
+        values (#{memberId}, #{goalName}, #{goalAmount}, #{currentAmount}, #{targetPercent}, now(), #{startDate}, #{endDate}, #{goalCategory}, #{rewardAmount}) <!-- REWARD_AMOUNT 추가 -->
     </insert>
 
     <update id="update">
         update Goal
         set member_id      = #{memberId},
-            goal_Name      = #{goalName},
-            goal_Amount    = #{goalAmount},
-            current_Amount = #{currentAmount},
-            target_percent  = #{targetPercent},
-            start_Date     = #{startDate},
-            end_Date       = #{endDate},
-            updated_At     = now(),
-            goal_Cateogry  = #{goalCategory}
+        goal_Name      = #{goalName},
+        goal_Amount    = #{goalAmount},
+        current_Amount = #{currentAmount},
+        target_percent  = #{targetPercent},
+        start_Date     = #{startDate},
+        end_Date       = #{endDate},
+        updated_At     = now(),
+        goal_Category   = #{goalCategory},
+        reward_amount   = #{rewardAmount} <!-- REWARD_AMOUNT 추가 -->
         where goal_Id = #{goalId}
     </update>
 

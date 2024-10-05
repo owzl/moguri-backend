@@ -85,6 +85,7 @@ public class GoalController {
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private Date endDate;
         private String goalCategory;
+        private BigDecimal rewardAmount;
 
         private static GoalItem of(Goal goal) {
             GoalItem converted = new GoalItem();
@@ -95,6 +96,7 @@ public class GoalController {
             converted.startDate = goal.getStartDate();
             converted.endDate = goal.getEndDate();
             converted.goalCategory = goal.getGoalCategory();
+            converted.rewardAmount = goal.getRewardAmount();
             return converted;
         }
     }
@@ -109,6 +111,7 @@ public class GoalController {
         private Date startDate;
         private Date endDate;
         private String goalCategory;
+        private BigDecimal rewardAmount;
 
         public GoalCreateParam convert() {
             GoalCreateParam param = GoalCreateParam.builder()
@@ -120,6 +123,7 @@ public class GoalController {
                     .startDate(startDate)
                     .endDate(endDate)
                     .goalCategory(goalCategory)
+                    .rewardAmount(rewardAmount)
                     .build();
             return param;
         }
@@ -136,6 +140,7 @@ public class GoalController {
         private Date startDate;
         private Date endDate;
         private String goalCategory;
+        private BigDecimal rewardAmount;
 
         public GoalUpdateParam convert() {
             GoalUpdateParam param = GoalUpdateParam.builder()
@@ -148,6 +153,7 @@ public class GoalController {
                     .startDate(startDate)
                     .endDate(endDate)
                     .goalCategory(goalCategory)
+                    .rewardAmount(rewardAmount)
                     .build();
             return param;
         }

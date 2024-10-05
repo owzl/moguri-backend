@@ -23,6 +23,7 @@ public class GoalCreateParam {
     private Date startDate;
     private Date endDate;
     private String goalCategory;
+    private BigDecimal rewardAmount;
 
     public Goal toEntity() {
         Goal goal = Goal.builder()
@@ -33,7 +34,9 @@ public class GoalCreateParam {
                 .targetPercent(targetPercent)
                 .startDate(startDate)
                 .endDate(endDate)
-                .goalCategory(goalCategory).build();
+                .goalCategory(goalCategory)
+                .rewardAmount(rewardAmount)
+                .build();
         return goal;
     }
 }

@@ -20,4 +20,6 @@ public class GoalUpdateParam {
     private Date startDate;
     private Date endDate;
     private String goalCategory;
+    private BigDecimal rewardAmount;
+
 }
