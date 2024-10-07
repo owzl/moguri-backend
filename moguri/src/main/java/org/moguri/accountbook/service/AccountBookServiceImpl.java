@@ -49,6 +49,7 @@ public class AccountBookServiceImpl implements AccountBookService {
     // 수입/지출 내역 등록
     @Override
     public void createAccountBook(AccountBook accountBook) {
+
         try {
             // 가계부 항목 생성
             accountBookMapper.createAccountBook(accountBook);
@@ -56,13 +57,16 @@ public class AccountBookServiceImpl implements AccountBookService {
             // 목표 조회
             Goal goal = goalMapper.findByGoalCategory(accountBook.getCategory());
 
-            // 지출 목표 - currentAmount 업데이트
             if (goal != null) {
-                getCurrentAmountForCategory(accountBook.getCategory(), goal);
+                // 저축 목표 - currentAmount 업데이트 (조건 추가)
+                if (accountBook.getType().equals("저축")) { // 타입이 '저축'일 경우에만 호출
+                    updateCurrentAmountByDescription(accountBook.getDescription());
+                }else{
+                    // 지출 목표 - currentAmount 업데이트
+                    getCurrentAmountForCategory(accountBook.getCategory(), goal);
+                }
             }
 
-            // 저축 목표 - currentAmount 업데이트
-            updateCurrentAmountByDescription(accountBook.getDescription());
         } catch (Exception e) {
             throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
         }
@@ -78,13 +82,14 @@ public class AccountBookServiceImpl implements AccountBookService {
             // 목표 조회
             Goal goal = goalMapper.findByGoalCategory(param.getCategory());
 
-            // 지출 목표 - currentAmount 업데이트
-            if (goal != null) {
+            // 저축 목표 - currentAmount 업데이트 (조건 추가)
+            if (param.getType().equals("저축")) {
+                updateCurrentAmountByDescription(param.getDescription());
+            } else if (goal != null) {
+                // 지출 목표 - currentAmount 업데이트
                 getCurrentAmountForCategory(param.getCategory(), goal);
             }
 
-            // 저축 목표 - currentAmount 업데이트
-            updateCurrentAmountByDescription(param.getDescription());
         } catch (Exception e) {
             throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
         }
@@ -92,29 +97,6 @@ public class AccountBookServiceImpl implements AccountBookService {
 
 
     // 수입/지출 내역 삭제
-    /*@Override
-    public void deleteAccountBook(long accountBookId) {
-        try {
-            // 삭제할 가계부 항목 조회
-            AccountBook accountBook = accountBookMapper.getAccountBook(accountBookId);
-
-            if (accountBook != null) {
-                // 가계부 항목 삭제
-                accountBookMapper.deleteAccountBook(accountBookId);
-
-                // 지출 목표 - currentAmount 업데이트
-                getCurrentAmountForCategory(accountBook.getCategory());
-
-                // 저축 목표 - currentAmount 업데이트
-                updateCurrentAmountByDescription(accountBook.getDescription()); // 삭제된 description 기반 업데이트
-
-            } else {
-                throw new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY);
-            }
-        } catch (Exception e) {
-            throw new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY);
-        }
-    }*/
     @Override
     public void deleteAccountBook(long accountBookId) {
         try {
@@ -128,14 +110,13 @@ public class AccountBookServiceImpl implements AccountBookService {
                 // 목표 조회
                 Goal goal = goalMapper.findByGoalCategory(accountBook.getCategory());
 
-                // 지출 목표 - currentAmount 업데이트
-                if (goal != null) {
+                // 저축 목표 - currentAmount 업데이트
+                if (accountBook.getType().equals("저축")) {
+                    updateCurrentAmountByDescription(accountBook.getDescription());
+                } else if (goal != null) {
+                    // 지출 목표 - currentAmount 업데이트
                     getCurrentAmountForCategory(accountBook.getCategory(), goal);
                 }
-
-                // 저축 목표 - currentAmount 업데이트
-                updateCurrentAmountByDescription(accountBook.getDescription()); // 삭제된 description 기반 업데이트
-
             } else {
                 throw new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY);
             }
@@ -143,6 +124,7 @@ public class AccountBookServiceImpl implements AccountBookService {
             throw new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY);
         }
     }
+
 
 
     /* === 목표와 연동 === */
@@ -165,6 +147,8 @@ public class AccountBookServiceImpl implements AccountBookService {
 
     // 거래 상세 내역로 저축 목표 currentAmount 업데이트
     private void updateCurrentAmountByDescription(String description) {
+        log.info("현재 저축 금액 업뎃: {}", description);
+
         // 해당 거래 상세 내역에 대한 currentAmount 계산
         BigDecimal newCurrentAmount = accountBookMapper.getCurrentAmountForDescription(description);
 

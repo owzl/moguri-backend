@@ -46,11 +46,6 @@ public class GoalService {
         return goalMapper.getTotalCount();
     }
 
-    /*public void update(GoalUpdateParam param) {
-        Optional.ofNullable(param.getGoalId())
-                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
-        goalMapper.update(param);
-    }*/
     public void update(GoalUpdateParam param) {
         Optional.ofNullable(param.getGoalId())
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
@@ -87,28 +82,6 @@ public class GoalService {
     }
 
 
-    /*public void create(GoalCreateParam param) {
-        Goal goal = param.toEntity();
-        goalMapper.create(goal);
-    }*/
-    /*public void create(GoalCreateParam param) {
-        Goal goal = param.toEntity();
-
-        // 저축 목표의 경우
-        if (goal.getGoalCategory() == null) {
-            // 사용자가 입력한 goalAmount를 설정
-            goal.setGoalAmount(param.getGoalAmount());
-        }
-        // 지출 목표의 경우
-        else {
-            // 지출 목표의 goalAmount를 계산
-            BigDecimal goalAmount = accountBookMapper.getGoalAmountForCategory(goal.getGoalCategory());
-            goal.setGoalAmount(goalAmount);
-        }
-
-        // Goal을 데이터베이스에 저장
-        goalMapper.create(goal);
-    }*/
     public void create(GoalCreateParam param) {
         Goal goal = param.toEntity();
 
@@ -133,7 +106,6 @@ public class GoalService {
         // Goal을 데이터베이스에 저장
         goalMapper.create(goal);
     }
-
 
 
     public void delete(long goalId) {

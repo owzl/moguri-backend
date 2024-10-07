@@ -41,8 +41,30 @@
     </select>
 
     <insert id="create">
-        insert into Goal (member_id, goal_Name, goal_Amount, current_Amount, target_percent, created_At, start_Date, end_Date, goal_Category, reward_amount)
-        values (#{memberId}, #{goalName}, #{goalAmount}, #{currentAmount}, #{targetPercent}, now(), #{startDate}, #{endDate}, #{goalCategory}, #{rewardAmount})
+        insert into Goal (
+                          member_id,
+                          goal_Name,
+                          goal_Amount,
+                          current_Amount,
+                          target_percent,
+                          created_At,
+                          start_Date,
+                          end_Date,
+                          goal_Category,
+                          reward_amount
+                        )
+        values (
+                #{memberId},
+                #{goalName},
+                #{goalAmount},
+                #{currentAmount},
+                #{targetPercent},
+                now(),
+                #{startDate},
+                #{endDate},
+                #{goalCategory},
+                #{rewardAmount}
+               )
     </insert>
 
     <update id="update">

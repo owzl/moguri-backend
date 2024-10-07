@@ -81,6 +81,7 @@ public class GoalController {
 
     @Data
     private static class GoalItem {
+        private long memberId;
         private long goalId;
         private String goalName;
         private BigDecimal goalAmount;
@@ -95,6 +96,7 @@ public class GoalController {
 
         private static GoalItem of(Goal goal) {
             GoalItem converted = new GoalItem();
+            converted.memberId = goal.getMemberId(); // 목표 추가 안돼서 추가
             converted.goalId = goal.getGoalId();
             converted.goalName = goal.getGoalName();
             converted.goalAmount = goal.getGoalAmount();
