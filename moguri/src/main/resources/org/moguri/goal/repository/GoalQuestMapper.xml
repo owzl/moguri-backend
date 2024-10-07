@@ -10,7 +10,7 @@
         <result column="quest_description" property="questDescription"/>
         <result column="category_id" property="categoryId"/>
         <result column="category_name" property="categoryName"/> <!-- 카테고리 이름 추가 -->
-        <result column="target_amount" property="targetAmount"/>
+        <result column="target_percent" property="targetPercent"/>
         <result column="current_amount" property="currentAmount"/>
         <result column="quest_days" property="questDays"/>
         <result column="reward_amount" property="rewardAmount"/>
@@ -25,7 +25,7 @@
             GQ.QUEST_DESCRIPTION,
             GQ.CATEGORY_ID,
             C.CATEGORY_NAME,  -- 카테고리 이름 추가
-            GQ.TARGET_AMOUNT,
+            GQ.TARGET_PERCENT,
             GQ.CURRENT_AMOUNT,
             GQ.QUEST_DAYS,
             GQ.REWARD_AMOUNT

@@ -16,7 +16,6 @@
         <result column="start_Date" property="startDate"></result>
         <result column="end_Date" property="endDate"></result>
         <result column="goal_Category" property="goalCategory"></result>
-        <result column="target_percent" property="goalCategory"></result>
         <result column="reward_amount" property="rewardAmount"></result>
     </resultMap>
 
@@ -27,7 +26,7 @@
     </select>
 
     <select id="findAll" resultType="org.moguri.goal.domain.Goal">
-        <![CDATA[
+    <![CDATA[
         SELECT *
         FROM Goal
         ORDER BY created_At DESC
@@ -43,7 +42,7 @@
 
     <insert id="create">
         insert into Goal (member_id, goal_Name, goal_Amount, current_Amount, target_percent, created_At, start_Date, end_Date, goal_Category, reward_amount)
-        values (#{memberId}, #{goalName}, #{goalAmount}, #{currentAmount}, #{targetPercent}, now(), #{startDate}, #{endDate}, #{goalCategory}, #{rewardAmount}) <!-- REWARD_AMOUNT 추가 -->
+        values (#{memberId}, #{goalName}, #{goalAmount}, #{currentAmount}, #{targetPercent}, now(), #{startDate}, #{endDate}, #{goalCategory}, #{rewardAmount})
     </insert>
 
     <update id="update">
@@ -61,10 +60,34 @@
         where goal_Id = #{goalId}
     </update>
 
-
     <delete id="delete">
         delete
         from Goal
         where goal_Id = #{goalId}
     </delete>
+
+    <!-- 목표와 연동 -->
+    <update id="updateCurrentAmount">
+        UPDATE Goal
+        SET current_Amount = #{currentAmount}
+        WHERE goal_Id = #{goalId}
+    </update>
+
+    <update id="updateGoalAmount">
+        UPDATE Goal
+        SET goal_Amount = #{goalAmount}
+        WHERE goal_Id = #{goalId}
+    </update>
+
+    <select id="findByGoalCategory" resultMap="GoalMap">
+        SELECT *
+        FROM Goal
+        WHERE goal_Category = #{category}
+    </select>
+
+    <select id="findByGoalName" resultType="org.moguri.goal.domain.Goal">
+        SELECT *
+        FROM Goal
+        WHERE goal_name = #{goalName}
+    </select>
 </mapper>

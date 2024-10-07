@@ -3,8 +3,6 @@ package org.moguri.goal.controller;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.moguri.accountbook.controller.AccountBookController;
-import org.moguri.accountbook.domain.AccountBook;
 import org.moguri.common.response.ApiResponse;
 import org.moguri.common.response.MoguriPage;
 import org.moguri.common.response.PageRequest;
@@ -54,7 +52,7 @@ public class GoalQuestController {
         private String questDescription;
         private long categoryId;  // Category와 연결
         private String categoryName; // 카테고리 이름 추가
-        private BigDecimal targetAmount;
+        private BigDecimal targetPercent;
         private BigDecimal currentAmount;
         private int questDays;
         private BigDecimal rewardAmount;
@@ -66,7 +64,7 @@ public class GoalQuestController {
             converted.questDescription = goalQuest.getQuestDescription();
             converted.categoryId = goalQuest.getCategoryId();
             converted.categoryName = goalQuest.getCategoryName();
-            converted.targetAmount = goalQuest.getTargetAmount();
+            converted.targetPercent = goalQuest.getTargetPercent();
             converted.currentAmount = goalQuest.getCurrentAmount();
             converted.questDays = goalQuest.getQuestDays();
             converted.rewardAmount = goalQuest.getRewardAmount();

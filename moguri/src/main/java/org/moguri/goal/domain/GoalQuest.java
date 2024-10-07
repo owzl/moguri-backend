@@ -17,7 +17,7 @@ public class GoalQuest {
     private String questDescription;
     private int categoryId;
     private String categoryName; // 카테고리 이름 추가
-    private BigDecimal targetAmount;
+    private BigDecimal targetPercent;
     private BigDecimal currentAmount;
     private int questDays;
     private BigDecimal rewardAmount;

@@ -37,6 +37,7 @@
         FROM AccountBook
     </select>
 
+
     <!-- 수입/지출 개별 내역 조회 -->
     <select id="getAccountBook" resultType="AccountBook">
         SELECT *
@@ -92,15 +93,39 @@
         WHERE accountbook_id = #{accountBookId}
     </delete>
 
-    <!-- 특정 카테고리와 월, 년에 따른 총 지출을 계산(current_amount, goal_amount 계산용 공용 쿼리) -->
-    <!--<select id="getTotalSpendingForGoal" resultType="java.math.BigDecimal">
+    <!-- === 목표와 연동 === -->
+    <!-- 지출 목표 - currentAmount 구하기 -->
+    <!--<select id="getCurrentAmountForCategory" parameterType="String" resultType="java.math.BigDecimal">
         SELECT SUM(amount)
         FROM AccountBook
-        WHERE category = (SELECT goal_category FROM Goal WHERE goal_id = #{goalId})
-            AND member_id = #{memberId}
-            AND MONTH(transaction_date) = #{month}
-          AND YEAR(transaction_date) = #{year}
+        WHERE category = #{category}
+          AND transaction_date BETWEEN DATE_FORMAT(NOW() ,'%Y-%m-01') AND LAST_DAY(NOW())
     </select>-->
+    <select id="getCurrentAmountForCategory" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(amount)
+        FROM AccountBook
+        WHERE category = #{category}
+          AND transaction_date BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+
+    <!-- 저축 목표 - currentAmount 구하기 -->
+    <select id="getCurrentAmountForDescription" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(amount)
+        FROM AccountBook
+        WHERE description = #{description}
+          AND transaction_date BETWEEN DATE_FORMAT(NOW() ,'%Y-%m-01') AND LAST_DAY(NOW())
+    </select>
+
+    <!-- goalAmount 구하기 -->
+    <select id="getGoalAmountForCategory" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(a.amount) * (1 - (MAX(g.target_percent) / 100)) AS adjusted_amount
+        FROM AccountBook a
+                 JOIN Goal g ON a.category = g.goal_Category
+        WHERE a.category = #{categoryId}
+          AND a.transaction_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH) AND LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
+        GROUP BY a.category;
+    </select>
 
 
 </mapper>

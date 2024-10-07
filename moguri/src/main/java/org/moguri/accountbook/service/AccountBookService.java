@@ -11,10 +11,10 @@ public interface AccountBookService {
     /* === 수입/지출 관리 === */
 
     // 수입/지출 모든 내역 조회
-    List<AccountBook> getAccountBooks(PageRequest pageRequest);
+     List<AccountBook> getAccountBooks(PageRequest pageRequest);
 
     // 수입/지출 모든 내역 개수 - 페이징
-    int getTotalAccountBooksCount();
+     int getTotalAccountBooksCount();
 
     // 수입/지출 개별 내역 조회
     AccountBook getAccountBook(long accountBookId);
@@ -27,8 +27,5 @@ public interface AccountBookService {
 
     // 수입/지출 내역 삭제
     void deleteAccountBook(long accountBookId);
-
-    /* === 목표와 연동 === */
-
 
 }

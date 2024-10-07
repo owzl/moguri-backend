@@ -34,12 +34,17 @@ public class GoalController {
     // 목표 목록 조회
     @GetMapping
     public ApiResponse<?> getList(GoalGetRequest request) {
+        // 페이지 요청 검증
         PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
 
+        // 목표 목록 조회
         List<Goal> goals = goalService.getList(pageRequest);
 
+        // 총 목표 수 조회
         int totalCount = goalService.getTotalCount();
+
+        // ApiResponse 반환
         return ApiResponse.of(MoguriPage.of(pageRequest, totalCount, goals.stream().map(GoalItem::of).toList()));
     }
 
