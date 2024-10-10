@@ -77,6 +77,13 @@ public class MemberController {
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
+    @GetMapping("/{id}/cotton-candy")
+    public ApiResponse<?> getCottonCandy(@PathVariable("id") Long id) {
+        int cottonCandy = memberService.getCottonCandy(id);
+        return ApiResponse.of(cottonCandy);
+    }
+
+
     @Data
     private static class MemberGetRequest {
         private int page = 0;

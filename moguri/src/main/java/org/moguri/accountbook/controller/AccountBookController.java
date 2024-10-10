@@ -36,7 +36,7 @@ public class AccountBookController {
         PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
 
         // 페이징 요청 생성
-        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit(), request.getMemberId());
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
 
         // 거래 내역 조회
         List<AccountBook> accountBooks = service.getAccountBooks(pageRequest, request.getMemberId());
@@ -58,7 +58,7 @@ public class AccountBookController {
 
     // 수입/지출 개별 내역 조회
     @GetMapping("/{accountBookId}")
-    public ApiResponse<?> getAccountBook(@PathVariable long accountBookId, @RequestParam int memberId) {
+    public ApiResponse<?> getAccountBook(@PathVariable long accountBookId, @RequestParam long memberId) {
         AccountBook accountBook = service.getAccountBook(accountBookId, memberId);
         return ApiResponse.of(AccountBookItem.of(accountBook));
     }
@@ -73,7 +73,7 @@ public class AccountBookController {
 
     // 수입/지출 내역 수정
     @PatchMapping("/{accountBookId}")
-    public ApiResponse<?> update(@PathVariable long accountBookId, @RequestBody AccountBookUpdateRequest request, @RequestParam int memberId) {
+    public ApiResponse<?> update(@PathVariable long accountBookId, @RequestBody AccountBookUpdateRequest request, @RequestParam long memberId) {
         AccountBookUpdateParam param = request.convert();
         param.setAccountBookId(accountBookId);
         service.updateAccountBook(param, memberId);
@@ -82,7 +82,7 @@ public class AccountBookController {
 
     // 수입/지출 내역 삭제
     @DeleteMapping("/{accountBookId}")
-    public ApiResponse<?> delete(@PathVariable long accountBookId, @RequestParam int memberId) {
+    public ApiResponse<?> delete(@PathVariable long accountBookId, @RequestParam long memberId) {
         service.deleteAccountBook(accountBookId, memberId);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
@@ -92,14 +92,14 @@ public class AccountBookController {
     public static class AccountBookGetRequest {
         private int page = 0; // 현재 페이지 번호
         private int limit = 30; // 페이지당 항목 수
-        private int memberId; // memberId 수정 (long -> int)
+        private long memberId;
     }
 
     /* 내부 DTO 클래스 */
     @Data
     public static class AccountBookItem {
         private long accountBookId;
-        private int memberId;
+        private long memberId;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private Date transactionDate;
         private String category;
@@ -124,7 +124,7 @@ public class AccountBookController {
 
     @Data
     public static class AccountBookCreateRequest {
-        private int memberId;
+        private long memberId;
         private Date transactionDate;
         private String category;
         private int amount;

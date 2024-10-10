@@ -25,4 +25,5 @@ public interface MemberMapper {
 
     void updateCottonCandy(@Param("id") long id, @Param("cottonCandy") int cottonCandy);
 
+    int getCottonCandy(@Param("id") long id);
 }

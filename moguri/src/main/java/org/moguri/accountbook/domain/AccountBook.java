@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 public class AccountBook {
     private long accountBookId; // Auto_Increment
-    private int memberId; // 외래키
+    private long memberId; // 외래키
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date transactionDate; // 거래 날짜
     private String category; // 카테고리

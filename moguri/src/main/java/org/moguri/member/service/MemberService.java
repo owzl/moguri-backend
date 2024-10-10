@@ -61,4 +61,13 @@ public class MemberService {
         // 코튼 캔디 업데이트
         memberMapper.updateCottonCandy(id, cottonCandy);
     }
+    public int getCottonCandy(Long id) {
+        Member member = Optional.ofNullable(memberMapper.findById(id))
+                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        return member.getCottonCandy();
+    }
+
+
+
+
 }

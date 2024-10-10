@@ -74,4 +74,11 @@
         WHERE member_Id  = #{memberId}
     </update>
 
+    <!-- 코튼 캔디 조회 쿼리 -->
+    <select id="getCottonCandy" resultType="int">
+        SELECT cotton_Candy
+        FROM Member
+        WHERE member_Id = #{id}
+    </select>
+
 </mapper>
