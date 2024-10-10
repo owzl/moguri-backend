@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.PageRequest;
 import org.moguri.exception.MoguriRequestException;
+import org.moguri.stock.domain.ApiTokenConst;
 import org.moguri.stock.domain.Stock;
 import org.moguri.stock.enums.ApiEndPoint;
 import org.moguri.stock.enums.Period;
@@ -61,7 +62,7 @@ public class StockService {
 
     public String getToken() {
         // Redis에서 token 값 가져오기
-        Object token = redisTemplate.opsForValue().get("token");
+        Object token = redisTemplate.opsForValue().get(ApiTokenConst.AccessToken);
 
         // Redis에 token 값이 없다면 새로운 토큰을 생성
         if (token == null) {
@@ -81,7 +82,7 @@ public class StockService {
             String accessToken = response.getBody().getAccess_token();
 
             // Redis에 새로 받은 토큰과 TTL을 24시간으로 설정
-            redisTemplate.opsForValue().set("token", accessToken, 24, TimeUnit.HOURS);
+            redisTemplate.opsForValue().set(ApiTokenConst.AccessToken, accessToken, 24, TimeUnit.HOURS);
 
             return accessToken;
         }
@@ -98,7 +99,7 @@ public class StockService {
 
         String accessToken;
         // Redis에서 token 값 가져오기
-        accessToken = (String) redisTemplate.opsForValue().get("token");
+        accessToken = (String) redisTemplate.opsForValue().get(ApiTokenConst.AccessToken);
 
         // Redis에 token 값이 없다면 새로운 토큰을 생성
         if (accessToken == null) {
@@ -127,7 +128,7 @@ public class StockService {
     public List<StockChart> getStockChart(String stockCode, Period period) throws JsonProcessingException {
         String accessToken;
         // Redis에서 token 값 가져오기
-        accessToken = (String) redisTemplate.opsForValue().get("token");
+        accessToken = (String) redisTemplate.opsForValue().get(ApiTokenConst.AccessToken);
 
         // Redis에 token 값이 없다면 새로운 토큰을 생성
         if (accessToken == null) {
@@ -228,7 +229,7 @@ public class StockService {
         stockMapper.updateTrade(param);
     }
 
-    public int getTotalCount() {
-        return stockMapper.getTotalCount();
+    public int getTotalCount(String keyword) {
+        return stockMapper.getTotalCount(keyword);
     }
 }
