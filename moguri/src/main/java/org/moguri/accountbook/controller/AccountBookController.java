@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.jdbc.Null;
 import org.moguri.accountbook.domain.AccountBook;
+import org.moguri.accountbook.dto.AccountBooksResponse;
 import org.moguri.accountbook.param.AccountBookCreateParam;
 import org.moguri.accountbook.param.AccountBookUpdateParam;
 import org.moguri.accountbook.service.AccountBookService;
@@ -13,10 +15,12 @@ import org.moguri.common.response.ApiResponse;
 import org.moguri.common.response.MoguriPage;
 import org.moguri.common.response.PageRequest;
 import org.moguri.common.validator.PageLimitSizeValidator;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+
 @RestController
 @RequestMapping("api/accountbook")
 @RequiredArgsConstructor
@@ -27,22 +31,34 @@ public class AccountBookController {
 
     // 수입/지출 내역 리스트 조회
     @GetMapping("")
-    public ApiResponse<?> getAccountBooks(AccountBookGetRequest request) {
+    public ResponseEntity<ApiResponse<AccountBooksResponse>> getAccountBooks(AccountBookGetRequest request) {
+        // 페이징 파라미터 검증
         PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
+
+        // 페이징 요청 생성
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit(), request.getMemberId());
 
-        // memberId를 함께 전달하여 해당 사용자의 거래 내역만 조회
+        // 거래 내역 조회
         List<AccountBook> accountBooks = service.getAccountBooks(pageRequest, request.getMemberId());
-        int totalCount = service.getTotalAccountBooksCount(request.getMemberId()); // memberId 기준 총 개수
 
-        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount,
-                accountBooks.stream().map(AccountBookController.AccountBookItem::of).toList()));
+        // 거래 내역 총 개수 조회
+        int totalCount = service.getTotalAccountBooksCount(request.getMemberId());
+
+        // 응답 객체 생성
+        AccountBooksResponse response = AccountBooksResponse.builder()
+                .accountBooks(accountBooks)
+                .totalCount(totalCount)
+                .build();
+
+        // 200 OK 응답 반환
+        return ResponseEntity.ok(ApiResponse.of(response));
     }
+
+
 
     // 수입/지출 개별 내역 조회
     @GetMapping("/{accountBookId}")
-    public ApiResponse<?> getAccountBook(@PathVariable long accountBookId, @RequestParam long memberId) {
-        // memberId와 accountBookId를 함께 확인하여 개별 내역 조회
+    public ApiResponse<?> getAccountBook(@PathVariable long accountBookId, @RequestParam int memberId) {
         AccountBook accountBook = service.getAccountBook(accountBookId, memberId);
         return ApiResponse.of(AccountBookItem.of(accountBook));
     }
@@ -57,18 +73,17 @@ public class AccountBookController {
 
     // 수입/지출 내역 수정
     @PatchMapping("/{accountBookId}")
-    public ApiResponse<?> update(@PathVariable long accountBookId, @RequestBody AccountBookUpdateRequest request, @RequestParam long memberId) {
+    public ApiResponse<?> update(@PathVariable long accountBookId, @RequestBody AccountBookUpdateRequest request, @RequestParam int memberId) {
         AccountBookUpdateParam param = request.convert();
-        param.setAccountBookId(accountBookId); // PathVariable로 받은 accountBookId 설정
-        // memberId도 설정할 수 있습니다.
+        param.setAccountBookId(accountBookId);
         service.updateAccountBook(param, memberId);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
     // 수입/지출 내역 삭제
     @DeleteMapping("/{accountBookId}")
-    public ApiResponse<?> delete(@PathVariable long accountBookId, @RequestParam long memberId) {
-        service.deleteAccountBook(accountBookId, memberId); // 삭제 시에도 memberId를 전달
+    public ApiResponse<?> delete(@PathVariable long accountBookId, @RequestParam int memberId) {
+        service.deleteAccountBook(accountBookId, memberId);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
@@ -77,14 +92,14 @@ public class AccountBookController {
     public static class AccountBookGetRequest {
         private int page = 0; // 현재 페이지 번호
         private int limit = 30; // 페이지당 항목 수
-        private long memberId; // memberId 추가
+        private int memberId; // memberId 수정 (long -> int)
     }
 
     /* 내부 DTO 클래스 */
     @Data
     public static class AccountBookItem {
         private long accountBookId;
-        private long memberId;
+        private int memberId;
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private Date transactionDate;
         private String category;
@@ -109,7 +124,7 @@ public class AccountBookController {
 
     @Data
     public static class AccountBookCreateRequest {
-        private long memberId;
+        private int memberId;
         private Date transactionDate;
         private String category;
         private int amount;

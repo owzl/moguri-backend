@@ -26,7 +26,7 @@ public class AttendanceController {
     public ApiResponse<MoguriPage<Attendance>> getAttendances(AttendanceGetRequest request) {
 
         PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
-        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit(), request.getLimit());
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
 
         List<Attendance> Attendances = attendanceService.getAttendances(pageRequest);
         int totalCount = attendanceService.getTotalCount();

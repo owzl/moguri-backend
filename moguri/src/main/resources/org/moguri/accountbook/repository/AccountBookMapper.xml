@@ -19,23 +19,23 @@
         <result column="deleted_at" property="deletedAt"/>
     </resultMap>
 
+    <!-- 수입/지출 내역 개수 조회 -->
+    <select id="getAccountBooksCount" parameterType="int" resultType="java.lang.Integer"> <!-- Long -> int -->
+        SELECT COUNT(*)
+        FROM AccountBook
+        WHERE member_id = #{memberId}
+    </select>
+
     <!-- 수입/지출 내역 리스트 조회 -->
     <select id="getAccountBooks" parameterType="org.moguri.common.response.PageRequest" resultMap="accountBookMap">
-        <![CDATA[
+    <![CDATA[
         SELECT *
         FROM AccountBook
         WHERE member_id = #{memberId}
         ORDER BY accountbook_id DESC
             LIMIT #{limit} OFFSET #{offset}
         ]]>
-    </select>
-
-    <!-- 수입/지출 내역 개수 조회 -->
-    <select id="getAccountBooksCount" parameterType="long" resultType="java.lang.Integer">
-        SELECT COUNT(*)
-        FROM AccountBook
-        WHERE member_id = #{memberId}
-    </select>
+</select>
 
     <!-- 수입/지출 개별 내역 조회 -->
     <select id="getAccountBook" parameterType="map" resultType="AccountBook">
@@ -76,16 +76,17 @@
     <update id="updateAccountBook" parameterType="AccountBook">
         UPDATE AccountBook
         SET member_id = #{memberId},
-        transaction_date = #{transactionDate},
-        category = #{category},
-        amount = #{amount},
-        type = #{type},
-        description = #{description},
-        payment_method = #{paymentMethod},
-        updated_at = now()
+            transaction_date = #{transactionDate},
+            category = #{category},
+            amount = #{amount},
+            type = #{type},
+            description = #{description},
+            payment_method = #{paymentMethod},
+            updated_at = now()
         WHERE accountbook_id = #{accountBookId}
-        AND member_id = #{memberId} <!-- 추가된 부분 -->
+          AND member_id = #{memberId}
     </update>
+
     <!-- 수입/지출 내역 삭제 -->
     <delete id="deleteAccountBook" parameterType="map">
         DELETE

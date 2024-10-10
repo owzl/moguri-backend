@@ -13,7 +13,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 public class AccountBookCreateParam {
-    private long memberId;
+    private int memberId;
     private Date transactionDate;
     private String category;
     private int amount;
