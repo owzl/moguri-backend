@@ -3,23 +3,26 @@ package org.moguri.stock.repository;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.moguri.common.response.PageRequest;
+import org.moguri.stock.domain.StockTrade;
 import org.moguri.stock.domain.Stock;
-import org.moguri.stock.param.StockBuyParam;
-import org.moguri.stock.param.StockSellParam;
+import org.moguri.stock.domain.TradeHistory;
 
 import java.util.List;
 
 @Mapper
 public interface StockMapper {
 
+    void saveTrade(StockTrade trade);
+
     List<Stock> findStockByKeyword(@Param("pageRequest") PageRequest pageRequest,
                                    @Param("keyword") String keyword);
 
-    int getTotalCount(@Param("keyword") String keyword);
+    int getSearchTotalCount(@Param("keyword") String keyword);
 
-    void saveTrade(StockBuyParam param);
+    int getRemainingQuantity(@Param("memberId") Long memberId, @Param("stockCode") String
+            stockCode);
 
-    void updateTrade(StockSellParam param);
+    List<TradeHistory> findTradeByStockCode(PageRequest pageRequest, Long memberId, String stockCode);
 
-
+    int getHistoryTotalCount(Long memberId, String stockCode);
 }

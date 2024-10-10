@@ -7,12 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.PageRequest;
 import org.moguri.exception.MoguriRequestException;
+import org.moguri.member.service.MemberService;
 import org.moguri.stock.domain.ApiTokenConst;
+import org.moguri.stock.domain.StockTrade;
 import org.moguri.stock.domain.Stock;
+import org.moguri.stock.domain.TradeHistory;
 import org.moguri.stock.enums.ApiEndPoint;
 import org.moguri.stock.enums.Period;
-import org.moguri.stock.param.StockBuyParam;
-import org.moguri.stock.param.StockSellParam;
+import org.moguri.stock.param.StockTradeParam;
 import org.moguri.stock.repository.StockMapper;
 import org.moguri.stock.stockResponse.Output;
 import org.moguri.stock.stockResponse.PriceResponse;
@@ -46,6 +48,8 @@ public class StockService {
     private final RedisTemplate redisTemplate;
 
     private final ObjectMapper objectMapper;
+
+    private final MemberService memberService;
 
     private String divCode;
 
@@ -221,15 +225,45 @@ public class StockService {
         return stockMapper.findStockByKeyword(pageRequest, keyword);
     }
 
-    public void buyStock(StockBuyParam param) {
-        stockMapper.saveTrade(param);
+    public void tradeStock(StockTradeParam param) {
+        StockTrade tradeHistory = param.toEntity();
+        stockMapper.saveTrade(tradeHistory);
+
+        Long memberId = param.getMemberId();
+        int totalAmount = param.getTotalAmount();
+        int cottonCandy = memberService.getCottonCandy(memberId);
+        switch (param.getTradeType()) {
+            case BUY:
+                // 매수 관련 로직
+                int remainingCottonCandy = cottonCandy - totalAmount;
+                if (remainingCottonCandy < 0) {
+                    throw new MoguriRequestException(ReturnCode.NOT_ENOUGH_COTTON_CANDY);
+                }
+                memberService.updateCottonCandy(memberId, remainingCottonCandy);
+                break;
+            case SELL:
+                // 매도 관련 로직
+                int remainingQuantity = stockMapper.getRemainingQuantity(memberId, param.getStockCode());
+                if (remainingQuantity - param.getQuantity() <= 0) {
+                    throw new MoguriRequestException(ReturnCode.NOT_ENOUGH_STOCKS);
+                }
+                memberService.updateCottonCandy(memberId, cottonCandy + totalAmount);
+                break;
+            default:
+                // 기타 경우에 대한 처리 (필요한 경우)
+                throw new MoguriRequestException(ReturnCode.INVALID_TRADE_TYPE);
+        }
     }
 
-    public void sellStock(StockSellParam param) {
-        stockMapper.updateTrade(param);
+    public List<TradeHistory> getTradeHistory(PageRequest pageRequest, Long memberId, String stockCode) {
+        return stockMapper.findTradeByStockCode(pageRequest, memberId, stockCode);
     }
 
-    public int getTotalCount(String keyword) {
-        return stockMapper.getTotalCount(keyword);
+    public int getSearchTotalCount(String keyword) {
+        return stockMapper.getSearchTotalCount(keyword);
+    }
+
+    public int getHistoryTotalCount(Long memberId, String stockCode) {
+        return stockMapper.getHistoryTotalCount(memberId, stockCode);
     }
 }
