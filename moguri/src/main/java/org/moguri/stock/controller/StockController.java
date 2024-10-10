@@ -43,12 +43,12 @@ public class StockController {
     }
 
     @GetMapping
-    public ApiResponse<?> getStockByKeyword(StockGetRequest request, @RequestParam String keyword) {
+    public ApiResponse<?> getStockByKeyword(@RequestParam String keyword, StockGetRequest request) {
         PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
 
         List<Stock> stocks = stockService.findStockByKeyword(pageRequest, keyword);
-        int totalCount = stockService.getTotalCount();
+        int totalCount = stockService.getTotalCount(keyword);
         return ApiResponse.of(MoguriPage.of(pageRequest, totalCount,
                 stocks.stream().map(StockController.StockItem::of).toList()));
     }
@@ -97,11 +97,14 @@ public class StockController {
 
         private String stockNameEN;
 
+        private String marketType;
+
         private static StockItem of(Stock stock) {
             StockItem converted = new StockItem();
             converted.stockCode = stock.getStockCode();
-            converted.stockNameKR = stock.getStockNameKR();
-            converted.stockNameEN = stock.getStockNameEN();
+            converted.stockNameKR = stock.getNameKr();
+            converted.stockNameEN = stock.getNameEn();
+            converted.marketType = stock.getMarketType();
             return converted;
         }
     }
@@ -110,7 +113,7 @@ public class StockController {
     private static class StockGetRequest {
 
         private int page = 0;
-        private int limit = 30;
+        private int limit = 20;
         //default 값
     }
 

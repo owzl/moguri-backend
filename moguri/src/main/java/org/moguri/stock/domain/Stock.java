@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Stock {
     private String stockCode;
-    private String stockNameKR;
-    private String stockNameEN;
+    private String nameKr;
+    private String nameEn;
+    private String marketType;
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.stock.repository.StockMapper">
+
+    <!-- 키워드를 포함하는 주식 검색 기능 -->
+    <select id="findStockByKeyword" resultType="org.moguri.stock.domain.Stock">
+        SELECT *
+        FROM Stock
+        WHERE (stock_code LIKE CONCAT('%', #{keyword}, '%')
+            OR name_kr LIKE CONCAT('%', #{keyword}, '%')
+            OR name_en LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY
+            LEAST(INSTR(stock_code, #{keyword}), INSTR(name_kr, #{keyword}), INSTR(name_en, #{keyword})) ASC,
+            name_kr ASC
+            LIMIT #{pageRequest.limit}
+        OFFSET #{pageRequest.page}
+    </select>
+
+    <!-- 총 결과 개수를 반환하는 쿼리 -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM Stock
+        WHERE (stock_code LIKE CONCAT('%', #{keyword}, '%')
+            OR name_kr LIKE CONCAT('%', #{keyword}, '%')
+            OR name_en LIKE CONCAT('%', #{keyword}, '%'))
+    </select>
+</mapper>
