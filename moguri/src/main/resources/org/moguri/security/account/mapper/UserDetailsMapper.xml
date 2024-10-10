@@ -15,11 +15,12 @@
         <result property="createdAt" column="CREATED_AT"/>
         <result property="updatedAt" column="UPDATED_AT"/>
         <result property="deletedAt" column="DELETED_AT"/>
+        <result property="cottonCandy" column="COTTON_CANDY"/>
         <collection property="authList" resultMap="authMap"/>
     </resultMap>
 
     <select id="get" resultMap="memberMap">
-        select m.MEMBER_ID, m.EMAIL, m.NICKNAME, m.PASSWORD, m.CREATED_AT, m.UPDATED_AT, m.DELETED_AT, a.auth
+        select m.MEMBER_ID, m.EMAIL, m.NICKNAME, m.PASSWORD, m.CREATED_AT, m.UPDATED_AT, m.DELETED_AT, a.auth, m.COTTON_CANDY
         from Member m
         left outer join member_auth a
         on m.MEMBER_ID = a.member_id <!-- MEMBER_ID로 수정 -->

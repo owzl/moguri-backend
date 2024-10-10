@@ -87,8 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/board/**").authenticated()
                 .antMatchers(HttpMethod.PUT, "/api/board/**").authenticated()
                 .antMatchers(HttpMethod.DELETE, "/api/board/**").authenticated()
-                .anyRequest().permitAll();
-
+                .anyRequest().permitAll();  // 남은 요청은 모두 허용
 
         http
                 .httpBasic().disable()

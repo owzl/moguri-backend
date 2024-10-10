@@ -1,5 +1,6 @@
 package org.moguri.accountbook.repository;
 
+import org.apache.ibatis.annotations.Param;
 import org.moguri.accountbook.domain.AccountBook;
 import org.moguri.common.response.PageRequest;
 
@@ -10,13 +11,12 @@ public interface AccountBookMapper {
 
     /* === 수입/지출 관리 === */
     // 수입/지출 내역 리스트 조회
-    List<AccountBook> getAccountBooks(PageRequest pageRequest); // 모든 내역 조회
+    List<AccountBook> getAccountBooks(PageRequest pageRequest); // memberId 추가
     // 수입/지출 내역 개수 - 페이징
-    int getAccountBooksCount();
+    int getAccountBooksCount(int memberId); // memberId 추가
 
     // 수입/지출 개별 내역 조회
-    //AccountBookVO getAccountBook(long accountBookId);
-    AccountBook getAccountBook(long accountBookId);
+    AccountBook getAccountBook(long accountBookId, int memberId); // memberId 추가
 
     // 수입/지출 내역 작성
     void createAccountBook(AccountBook accountBook);
@@ -25,11 +25,7 @@ public interface AccountBookMapper {
     int updateAccountBook(AccountBook accountBook);
 
     // 수입/지출 내역 삭제
-    int deleteAccountBook(long accountBookId);
+    int deleteAccountBook(@Param("accountBookId") long accountBookId, @Param("memberId") int memberId); // memberId 추가
 
     // 특정 날짜의 내역 조회 - maybe 캘린더용
-    // List<AccountBookVO> getAccountBookByDate(Date date);
-
-
-
 }

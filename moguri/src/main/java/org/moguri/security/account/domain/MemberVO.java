@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.List;
+import java.math.BigDecimal;
 // 사용자 정보 관리 (사용자 정보의 전체 관리)
 
 @Data
@@ -20,6 +21,7 @@ public class MemberVO {
     private Date createdAt; // 생성일
     private Date updatedAt; // 수정일
     private Date deletedAt; // 삭제일
+    private BigDecimal cottonCandy;
 
     private List<AuthVO> authList; // 권한 정보
 }

@@ -2,13 +2,15 @@ package org.moguri.accountbook.param;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.moguri.accountbook.domain.AccountBook;
 
 import java.util.Date;
 
-@Getter
+
+
+@Data
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
