@@ -11,7 +11,9 @@ import org.moguri.common.response.PageRequest;
 import org.moguri.exception.MoguriLogicException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -22,11 +24,18 @@ public class AccountBookServiceImpl implements AccountBookService {
     private final AccountBookMapper accountBookMapper;
 
     @Override
-    public List<AccountBook> getAccountBooks(PageRequest pageRequest, int memberId) { // memberId의 타입 변경
+    public List<AccountBook> getAccountBooks(PageRequest pageRequest, long memberId) {
         List<AccountBook> res = null;
         try {
             log.info("멤버아이디: {}", memberId);
-            res = accountBookMapper.getAccountBooks(pageRequest);
+
+            // memberId와 PageRequest를 Map 형태로 전달하여 accountBookMapper의 getAccountBooks 호출
+            Map<String, Object> params = new HashMap<>();
+            params.put("pageRequest", pageRequest);
+            params.put("memberId", memberId);
+
+            res = accountBookMapper.getAccountBooks(params); // 수정된 호출
+
         } catch (Exception e) {
             log.info("에러 :::::::::::::::: {}", e.getMessage());
         }
@@ -35,13 +44,13 @@ public class AccountBookServiceImpl implements AccountBookService {
     }
 
     @Override
-    public int getTotalAccountBooksCount(int memberId) { // memberId의 타입 변경
+    public int getTotalAccountBooksCount(long memberId) { // memberId의 타입 변경
         log.info("Fetching account book count for memberId: {}", memberId);
         return accountBookMapper.getAccountBooksCount(memberId);
     }
 
     @Override
-    public AccountBook getAccountBook(long accountBookId, int memberId) { // memberId의 타입 변경
+    public AccountBook getAccountBook(long accountBookId, long memberId) { // memberId의 타입 변경
         AccountBook accountBook = Optional.ofNullable(accountBookMapper.getAccountBook(accountBookId, memberId))
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
         return accountBook;
@@ -53,12 +62,12 @@ public class AccountBookServiceImpl implements AccountBookService {
     }
 
     @Override
-    public void updateAccountBook(AccountBookUpdateParam param, int memberId) { // memberId의 타입 변경
+    public void updateAccountBook(AccountBookUpdateParam param, long memberId) { // memberId의 타입 변경
         accountBookMapper.updateAccountBook(param.toEntity());
     }
 
     @Override
-    public void deleteAccountBook(@Param("accountBookId")long accountBookId, @Param("memberId") int memberId) { // memberId의 타입 변경
+    public void deleteAccountBook(@Param("accountBookId")long accountBookId, @Param("memberId") long memberId) { // memberId의 타입 변경
         accountBookMapper.deleteAccountBook(accountBookId, memberId);
     }
 }
