@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.member.repository.MemberMapper">
+
+
+    <!-- 전체 멤버 조회 쿼리 -->
+    <select id="findAll" resultType="Member">
+        SELECT member_Id,
+               email,
+               password,
+               nickName,
+               cotton_Candy,
+               role,
+               created_At,
+               updated_At,
+               deleted_At
+        FROM Member
+        ORDER BY createdAt DESC
+            LIMIT #{page}
+        OFFSET #{limit}
+    </select>
+
+    <!-- 총 멤버 수 조회 쿼리 -->
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM Member
+    </select>
+
+    <!-- 멤버 저장 쿼리 -->
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO Member (email, password, nickName, cotton_Candy, role, created_At, updated_At)
+        VALUES (#{email}, #{password}, #{nickName}, #{cottonCandy}, #{role}, NOW(), NOW())
+    </insert>
+
+    <!-- ID로 멤버 조회 쿼리 -->
+    <select id="findById" resultType="Member">
+        SELECT member_Id,
+               email,
+               password,
+               nickName,
+               cotton_Candy,
+               role,
+               created_At,
+               updated_At,
+               deleted_At
+        FROM Member
+        WHERE member_Id = #{id}
+    </select>
+
+    <!-- 멤버 정보 수정 쿼리 -->
+    <update id="update">
+        UPDATE Member
+        SET email       = #{email},
+            password    = #{password},
+            nickName    = #{nickName},
+            cotton_Candy = #{cottonCandy},
+            role        = #{role},
+            updated_At   = NOW()
+        WHERE member_Id = #{id}
+    </update>
+    <!-- 코튼 캔디 전용 업데이트 쿼리 추가 -->
+    <update id="updateCottonCandy">
+        UPDATE Member
+        SET cotton_Candy = #{cottonCandy},
+            updated_At   = NOW()
+        WHERE member_Id = #{id}
+    </update>
+    <!-- 멤버 삭제 쿼리 (소프트 삭제) -->
+    <update id="delete">
+        UPDATE Member
+        SET deleted_At = NOW()
+        WHERE member_Id  = #{memberId}
+    </update>
+
+    <!-- 코튼 캔디 조회 쿼리 -->
+    <select id="getCottonCandy" resultType="int">
+        SELECT cotton_Candy
+        FROM Member
+        WHERE member_Id = #{id}
+    </select>
+
+</mapper>

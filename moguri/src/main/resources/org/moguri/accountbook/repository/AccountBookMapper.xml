@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.moguri.accountbook.repository.AccountBookMapper">
+
+    <resultMap id="accountBookMap" type="AccountBook">
+        <id column="accountbook_id" property="accountBookId"/>
+        <result column="member_id" property="memberId"/>
+        <result column="transaction_date" property="transactionDate"/>
+        <result column="category" property="category"/>
+        <result column="amount" property="amount"/>
+        <result column="type" property="type"/>
+        <result column="description" property="description"/>
+        <result column="payment_method" property="paymentMethod"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted_at" property="deletedAt"/>
+    </resultMap>
+
+    <!-- 수입/지출 내역 개수 조회 -->
+    <select id="getAccountBooksCount" parameterType="long" resultType="java.lang.Integer"> <!-- Long -> int -->
+        SELECT COUNT(*)
+        FROM AccountBook
+        WHERE member_id = #{memberId}
+    </select>
+
+    <!-- 수입/지출 내역 리스트 조회 -->
+    <select id="getAccountBooks" parameterType="map" resultMap="accountBookMap">
+    <![CDATA[
+        SELECT *
+        FROM AccountBook
+        WHERE member_id = #{memberId}
+        ORDER BY accountbook_id DESC
+            LIMIT #{pageRequest.limit} OFFSET #{pageRequest.offset}
+        ]]>
+</select>
+
+    <!-- 수입/지출 개별 내역 조회 -->
+    <select id="getAccountBook" parameterType="map" resultType="AccountBook">
+        SELECT *
+        FROM AccountBook
+        WHERE accountbook_id = #{accountBookId}
+          AND member_id = #{memberId}
+    </select>
+
+    <!-- 수입/지출 내역 작성 -->
+    <insert id="createAccountBook" parameterType="AccountBook">
+        INSERT INTO AccountBook(
+        member_id,
+        transaction_date,
+        category,
+        amount,
+        type,
+        description,
+        payment_method,
+        created_at
+        )
+        VALUES (
+        #{memberId},
+        #{transactionDate},
+        #{category},
+        #{amount},
+        #{type},
+        #{description},
+        #{paymentMethod},
+        now()
+        )
+        <selectKey resultType="Long" keyProperty="accountBookId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <!-- 수입/지출 내역 수정 -->
+    <update id="updateAccountBook" parameterType="AccountBook">
+        UPDATE AccountBook
+        SET member_id = #{memberId},
+            transaction_date = #{transactionDate},
+            category = #{category},
+            amount = #{amount},
+            type = #{type},
+            description = #{description},
+            payment_method = #{paymentMethod},
+            updated_at = now()
+        WHERE accountbook_id = #{accountBookId}
+          AND member_id = #{memberId}
+    </update>
+
+    <!-- 수입/지출 내역 삭제 -->
+    <delete id="deleteAccountBook" parameterType="map">
+        DELETE
+        FROM AccountBook
+        WHERE accountbook_id = #{accountBookId}
+          AND member_id = #{memberId}
+    </delete>
+
+</mapper>

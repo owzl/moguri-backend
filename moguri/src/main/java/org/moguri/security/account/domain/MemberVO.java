@@ -4,23 +4,24 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Date;
 import java.util.List;
+import java.math.BigDecimal;
+// 사용자 정보 관리 (사용자 정보의 전체 관리)
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class MemberVO {
-    private String username; // admin
-    private String password; //
-    private String email; //
-    private Date regDate;
-    private Date updateDate;
+    private int memberId; // MEMBER_ID를 PK로 사용
+    private String email; // 이메일
+    private String nickName; // 닉네임
+    private String password; // 비밀번호
+    private Date createdAt; // 생성일
+    private Date updatedAt; // 수정일
+    private Date deletedAt; // 삭제일
+    private BigDecimal cottonCandy;
 
-    private List<AuthVO> authList;
-
-    UserDetails details;
+    private List<AuthVO> authList; // 권한 정보
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.event.roulette.repository.RouletteMapper">
+
+    <resultMap id="rouletteMap" type="org.moguri.event.roulette.domain.Roulette">
+        <id column="roulette_id" property="rouletteId"/>
+        <result column="member_id" property="memberId"/>
+        <result column="roulette_date" property="rouletteDate"/>
+    </resultMap>
+
+    <select id="hasPlayedRouletteToday" resultType="boolean">
+        SELECT CASE
+                   WHEN COUNT(*) > 0 THEN TRUE
+                   ELSE FALSE
+                   END AS has_roulette_today
+        FROM Roulette
+        WHERE MEMBER_ID = #{memberId}
+          AND ROULETTE_DATE = CURDATE()
+    </select>
+
+    <insert id="createRoulette" parameterType="org.moguri.event.roulette.domain.Roulette">
+        INSERT INTO Roulette (member_id, roulette_date)
+        VALUES (#{memberId}, NOW())
+
+        <selectKey resultType="Long" keyProperty="rouletteId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+</mapper>
