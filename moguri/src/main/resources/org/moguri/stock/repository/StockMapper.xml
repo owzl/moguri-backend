@@ -89,26 +89,36 @@
         SELECT th.stock_code AS stockCode,
                s.name_kr     AS nameKr,
                s.market_type AS marketType,
-               -- 남은 수량 계산 (매수 - 매도)
-               SUM(CASE
-                       WHEN th.trade_type = 'BUY' THEN th.quantity
-                       WHEN th.trade_type = 'SELL' THEN -th.quantity
-                       ELSE 0
-                   END)      AS quantity,
-               -- 평균 단가 계산
-               CASE
-                   WHEN SUM(CASE WHEN th.trade_type = 'BUY' THEN th.quantity ELSE 0 END) > 0 THEN
-                       ROUND(
-                               SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END) /
-                               SUM(CASE WHEN th.trade_type = 'BUY' THEN th.quantity ELSE 0 END)
-                       )
-                   ELSE
-                       0
-                   END       AS averagePrice
+               SUM(CASE WHEN th.trade_type = 'BUY' THEN th.quantity
+                        WHEN th.trade_type = 'SELL' THEN -th.quantity
+                        ELSE 0 END) AS quantity,
+               CASE WHEN SUM(CASE WHEN th.trade_type = 'BUY' THEN th.quantity ELSE 0 END) > 0 THEN
+                       ROUND(SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END)
+                            /SUM(CASE WHEN th.trade_type = 'BUY' THEN th.quantity ELSE 0 END)
+                        ) ELSE 0 END AS averagePrice
         FROM trade_history th
                  JOIN Stock s ON th.stock_code = s.stock_code
         WHERE th.member_id = #{memberId}
         GROUP BY th.stock_code, s.name_kr, s.market_type
         HAVING quantity > 0
+    </select>
+
+    <select id="findTop10Investors" resultType="org.moguri.stock.domain.InvestorRanking">
+        SELECT
+            m.nickName AS nickName,
+            ROUND(
+                    (SUM(CASE WHEN th.trade_type = 'SELL' THEN th.price * th.quantity ELSE 0 END)
+                        - SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END))
+                        / NULLIF(SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END), 0)
+                        * 100, 1
+            ) AS profitPercentage
+        FROM trade_history th
+                 JOIN Member m ON th.member_id = m.member_id
+        WHERE th.trade_At BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()
+          AND th.trade_type IN ('BUY', 'SELL')
+        GROUP BY m.nickName
+        HAVING SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END) > 0
+        ORDER BY profitPercentage DESC
+            LIMIT 10
     </select>
 </mapper>

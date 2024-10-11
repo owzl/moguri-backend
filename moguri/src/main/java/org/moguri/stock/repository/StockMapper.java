@@ -3,10 +3,7 @@ package org.moguri.stock.repository;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.moguri.common.response.PageRequest;
-import org.moguri.stock.domain.StockTrade;
-import org.moguri.stock.domain.Stock;
-import org.moguri.stock.domain.TradeHistory;
-import org.moguri.stock.domain.UserStock;
+import org.moguri.stock.domain.*;
 
 import java.util.List;
 import java.util.Map;
@@ -29,4 +26,6 @@ public interface StockMapper {
     int findHistoryTotalCount(@Param("memberId") Long memberId, @Param("stockCode") String stockCode);
 
     List<UserStock> findAllUserStocks(@Param("memberId") long memberId);
+
+    List<InvestorRanking> findTop10Investors();
 }

@@ -224,18 +224,17 @@ public class StockService {
 
     public void tradeStock(StockTradeParam param) {
         StockTrade tradeHistory = param.toEntity();
-        stockMapper.saveTrade(tradeHistory);
 
         Long memberId = param.getMemberId();
-        int totalAmount = param.getTotalAmount();
         int cottonCandy = memberService.getCottonCandy(memberId);
         switch (param.getTradeType()) {
             case BUY:
                 // 매수 관련 로직
-                int remainingCottonCandy = cottonCandy - totalAmount;
+                int remainingCottonCandy = cottonCandy - param.getTotalAmount();
                 if (remainingCottonCandy < 0) {
                     throw new MoguriRequestException(ReturnCode.NOT_ENOUGH_COTTON_CANDY);
                 }
+                stockMapper.saveTrade(tradeHistory);
                 memberService.updateCottonCandy(memberId, remainingCottonCandy);
                 break;
             case SELL:
@@ -244,7 +243,8 @@ public class StockService {
                 if (remainingQuantity - param.getQuantity() < 0) {
                     throw new MoguriRequestException(ReturnCode.NOT_ENOUGH_STOCKS);
                 }
-                memberService.updateCottonCandy(memberId, cottonCandy + totalAmount);
+                stockMapper.saveTrade(tradeHistory);
+                memberService.updateCottonCandy(memberId, cottonCandy + param.getTotalAmount());
                 break;
             default:
                 throw new MoguriRequestException(ReturnCode.INVALID_TRADE_TYPE);
@@ -265,5 +265,9 @@ public class StockService {
 
     public List<UserStock> getAllUserStocks(Long memberId) {
         return stockMapper.findAllUserStocks(memberId);
+    }
+
+    public List<InvestorRanking> getInvestorRanking() {
+        return stockMapper.findTop10Investors();
     }
 }
