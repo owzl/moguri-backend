@@ -9,6 +9,7 @@ import org.moguri.common.response.ApiResponse;
 import org.moguri.common.response.MoguriPage;
 import org.moguri.common.response.PageRequest;
 import org.moguri.common.validator.PageLimitSizeValidator;
+import org.moguri.stock.domain.InvestorRanking;
 import org.moguri.stock.domain.Stock;
 import org.moguri.stock.domain.TradeHistory;
 import org.moguri.stock.domain.UserStock;
@@ -78,6 +79,12 @@ public class StockController {
     public ApiResponse<?> getAllUserStocks(@PathVariable("memberId") Long memberId) {
         List<UserStock> userStocks = stockService.getAllUserStocks(memberId);
         return ApiResponse.of(userStocks);
+    }
+
+    @GetMapping("/ranking")
+    public ApiResponse<?> getRanking() {
+        List<InvestorRanking> investorRanking = stockService.getInvestorRanking();
+        return ApiResponse.of(investorRanking);
     }
 
     @Data
