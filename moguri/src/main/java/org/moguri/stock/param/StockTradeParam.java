@@ -1,5 +1,6 @@
 package org.moguri.stock.param;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.moguri.stock.domain.StockTrade;
 import org.moguri.stock.enums.TradeType;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @AllArgsConstructor
@@ -20,7 +21,8 @@ public class StockTradeParam {
     private int quantity;
     private int totalAmount;
     private TradeType tradeType;
-    private LocalDateTime tradeAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    private Date tradeAt;
 
     public StockTrade toEntity() {
         return StockTrade.builder()
