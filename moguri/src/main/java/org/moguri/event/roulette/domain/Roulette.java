@@ -1,4 +1,4 @@
-package org.moguri.event.attendance.domain;
+package org.moguri.event.roulette.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -10,10 +10,10 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @Data
-public class Attendance {
+public class Roulette {
 
-    private long attendanceId;
+    private long rouletteId;
     private long memberId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private Date attendanceDate;
+    private Date rouletteDate;
 }

@@ -12,6 +12,7 @@ import org.springframework.web.servlet.view.JstlView;
         "org.moguri.member.controller",
         "org.moguri.event.attendance.controller",
         "org.moguri.event.quiz.controller",
+        "org.moguri.event.roulette.controller",
         "org.moguri.accountbook.controller",
         "org.moguri.stock.controller",
         "org.moguri.stock.feignclient",

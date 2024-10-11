@@ -93,7 +93,7 @@
                         WHEN th.trade_type = 'SELL' THEN -th.quantity
                         ELSE 0 END) AS quantity,
                CASE WHEN SUM(CASE WHEN th.trade_type = 'BUY' THEN th.quantity ELSE 0 END) > 0 THEN
-                       ROUND(SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END)
+                        ROUND(SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END)
                             /SUM(CASE WHEN th.trade_type = 'BUY' THEN th.quantity ELSE 0 END)
                         ) ELSE 0 END AS averagePrice
         FROM trade_history th

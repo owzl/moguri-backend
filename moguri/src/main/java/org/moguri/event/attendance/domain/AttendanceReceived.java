@@ -10,10 +10,11 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @Data
-public class Attendance {
+public class AttendanceReceived {
 
-    private long attendanceId;
+    private long receivedId;
     private long memberId;
+    private long receivedType;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private Date attendanceDate;
+    private Date receivedDate;
 }

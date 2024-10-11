@@ -2,6 +2,7 @@ package org.moguri.event.quiz.service;
 
 import org.moguri.common.response.PageRequest;
 import org.moguri.event.quiz.domain.Quiz;
+import org.moguri.event.quiz.domain.QuizPart;
 
 import java.util.List;
 
@@ -18,4 +19,8 @@ public interface QuizService {
     void deleteQuiz(long quizId);
 
     int getTotalCount();
+
+    boolean hasUserQuizPartToday(long memberId, long quizType);
+
+    void createQuizPartToday(QuizPart quizpart);
 }

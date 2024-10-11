@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.PageRequest;
 import org.moguri.event.quiz.domain.Quiz;
+import org.moguri.event.quiz.domain.QuizPart;
 import org.moguri.event.quiz.repository.QuizMapper;
 import org.moguri.exception.MoguriLogicException;
 import org.springframework.stereotype.Service;
@@ -64,4 +65,17 @@ public class QuizServiceImpl implements QuizService {
         }
     }
 
+    @Override
+    public boolean hasUserQuizPartToday(long memberId, long quizType) {
+        return quizMapper.hasUserQuizPartToday(memberId, quizType);
+    }
+
+    @Override
+    public void createQuizPartToday(QuizPart quizpart) {
+        try {
+            quizMapper.createQuizPartToday(quizpart);
+        } catch (Exception e) {
+            throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
+        }
+    }
 }

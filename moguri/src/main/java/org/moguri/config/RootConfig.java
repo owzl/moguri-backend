@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = {"org.moguri.member.repository",
                             "org.moguri.event.attendance.repository",
                             "org.moguri.event.quiz.repository",
+                            "org.moguri.event.roulette.repository",
                             "org.moguri.accountbook.repository",
                             "org.moguri.goal.repository",
                             "org.moguri.stock.repository"})
@@ -32,6 +33,7 @@ import javax.sql.DataSource;
 @ComponentScan(basePackages = {"org.moguri.member.service",
                                "org.moguri.event.attendance.service",
                                "org.moguri.event.quiz.service",
+                               "org.moguri.event.roulette.service",
                                "org.moguri.accountbook.service",
                                "org.moguri.goal.service",
                                "org.moguri.stock.service",

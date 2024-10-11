@@ -1,4 +1,4 @@
-package org.moguri.event.attendance.domain;
+package org.moguri.event.quiz.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -10,10 +10,11 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @Data
-public class Attendance {
+public class QuizPart {
 
-    private long attendanceId;
+    private long quizpartId;
     private long memberId;
+    private long quizType;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private Date attendanceDate;
+    private Date partDate;
 }
