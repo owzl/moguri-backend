@@ -1,5 +1,6 @@
 package org.moguri.stock.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.moguri.common.response.PageRequest;
 import org.moguri.common.validator.PageLimitSizeValidator;
 import org.moguri.stock.domain.Stock;
 import org.moguri.stock.domain.TradeHistory;
+import org.moguri.stock.domain.UserStock;
 import org.moguri.stock.enums.Period;
 import org.moguri.stock.enums.TradeType;
 import org.moguri.stock.param.StockTradeParam;
@@ -18,7 +20,7 @@ import org.moguri.stock.stockResponse.Output;
 import org.moguri.stock.stockResponse.StockChart;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -72,6 +74,36 @@ public class StockController {
                 tradeHistory.stream().map(HistoryItem::of).toList()));
     }
 
+    @GetMapping("/{memberId}")
+    public ApiResponse<?> getAllUserStocks(@PathVariable("memberId") Long memberId) {
+        List<UserStock> userStocks = stockService.getAllUserStocks(memberId);
+        return ApiResponse.of(userStocks);
+    }
+
+    @Data
+    private static class UserStockItem {
+
+        private String stockCode;
+
+        private String nameKr;
+
+        private String marketType;
+
+        private int quantity;
+
+        private int averagePrice;
+
+        private static UserStockItem of(UserStock userStock) {
+            UserStockItem converted = new UserStockItem();
+            converted.stockCode = userStock.getStockCode();
+            converted.nameKr = userStock.getNameKr();
+            converted.marketType = userStock.getMarketType();
+            converted.quantity = userStock.getQuantity();
+            converted.averagePrice = userStock.getAveragePrice();
+            return converted;
+        }
+    }
+
     @Data
     private static class PriceItem {
 
@@ -122,7 +154,8 @@ public class StockController {
 
         private TradeType tradeType;
 
-        private LocalDateTime tradeAt;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private Date tradeAt;
 
         private static HistoryItem of(TradeHistory history) {
             HistoryItem converted = new HistoryItem();
@@ -136,6 +169,7 @@ public class StockController {
             return converted;
         }
     }
+
     @Data
     private static class HistoryGetRequest {
         private int page = 0;
@@ -153,7 +187,7 @@ public class StockController {
     @Data
     private static class StockTradeRequest {
 
-        private long memberId; // id
+        private long memberId; // 고유 id
 
         private int price;
 
