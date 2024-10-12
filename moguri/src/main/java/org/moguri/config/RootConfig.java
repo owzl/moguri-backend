@@ -27,7 +27,8 @@ import javax.sql.DataSource;
                             "org.moguri.event.quiz.repository",
                             "org.moguri.accountbook.repository",
                             "org.moguri.goal.repository",
-                            "org.moguri.stock.repository"})
+                            "org.moguri.stock.repository",
+                            "org.moguri.moguri.repository"})
 
 @ComponentScan(basePackages = {"org.moguri.member.service",
                                "org.moguri.event.attendance.service",
@@ -35,7 +36,8 @@ import javax.sql.DataSource;
                                "org.moguri.accountbook.service",
                                "org.moguri.goal.service",
                                "org.moguri.stock.service",
-                               "org.moguri.stock.config"})
+                               "org.moguri.stock.config",
+                               "org.moguri.moguri.service"})
 
 @Slf4j
 @EnableTransactionManagement
