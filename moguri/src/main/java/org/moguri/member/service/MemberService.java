@@ -66,8 +66,4 @@ public class MemberService {
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
         return member.getCottonCandy();
     }
-
-
-
-
 }

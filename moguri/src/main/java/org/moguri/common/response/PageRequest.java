@@ -13,7 +13,7 @@ public class PageRequest {
     private int limit; // 한 페이지 당 데이터 건수
 
     public static PageRequest of(int page, int limit) {
-        return new PageRequest(page, limit); // memberId를 null로 설정
+        return new PageRequest(page, limit);
     }
 
     public int getOffset() {

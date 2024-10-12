@@ -10,7 +10,6 @@
 
     <typeAliases>
         <package name="org.moguri.security.account.domain"/>
-        <package name="org.moguri.board.domain"/>
         <package name="org.moguri.event.attendance.domain"/>
         <package name="org.moguri.event.quiz.domain"/>
         <package name="org.moguri.accountbook.domain"/>
