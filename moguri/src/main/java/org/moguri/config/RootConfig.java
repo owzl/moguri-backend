@@ -15,6 +15,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,11 +39,12 @@ import javax.sql.DataSource;
                                "org.moguri.accountbook.service",
                                "org.moguri.goal.service",
                                "org.moguri.stock.service",
-                               "org.moguri.stock.config",
+                               "org.moguri.common.config",
                                "org.moguri.moguri.service"})
 
 @Slf4j
 @EnableTransactionManagement
+@EnableScheduling
 public class RootConfig {
 
     @Value("${jdbc.driver}")

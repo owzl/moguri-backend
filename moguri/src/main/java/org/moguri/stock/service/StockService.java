@@ -20,7 +20,9 @@ import org.moguri.stock.stockResponse.StockToken;
 import org.moguri.stock.param.TokenParam;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -31,6 +33,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -42,11 +45,13 @@ public class StockService {
 
     private final RestTemplate restTemplate;
 
-    private final RedisTemplate redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     private final ObjectMapper objectMapper;
 
     private final MemberService memberService;
+
+    private final ZSetOperations<String, Object> zSetOperations;
 
     private String divCode;
 
@@ -59,11 +64,9 @@ public class StockService {
     @Value("${api.baseUrl}")
     private String baseUrl;
 
-    private final String mktCode = "J";
-
     public String getToken() {
         // Redis에서 token 값 가져오기
-        Object token = redisTemplate.opsForValue().get(ApiTokenConst.AccessToken);
+        Object token = redisTemplate.opsForValue().get(RedisKeyConst.AccessToken);
 
         // Redis에 token 값이 없다면 새로운 토큰을 생성
         if (token == null) {
@@ -83,7 +86,7 @@ public class StockService {
             String accessToken = response.getBody().getAccess_token();
 
             // Redis에 새로 받은 토큰과 TTL을 24시간으로 설정
-            redisTemplate.opsForValue().set(ApiTokenConst.AccessToken, accessToken, 24, TimeUnit.HOURS);
+            redisTemplate.opsForValue().set(RedisKeyConst.AccessToken, accessToken, 24, TimeUnit.HOURS);
 
             return accessToken;
         }
@@ -100,14 +103,14 @@ public class StockService {
 
         String accessToken;
         // Redis에서 token 값 가져오기
-        accessToken = (String) redisTemplate.opsForValue().get(ApiTokenConst.AccessToken);
+        accessToken = (String) redisTemplate.opsForValue().get(RedisKeyConst.AccessToken);
 
         // Redis에 token 값이 없다면 새로운 토큰을 생성
         if (accessToken == null) {
             accessToken = getToken();
         }
         String url = UriComponentsBuilder.fromHttpUrl(baseUrl + ApiEndPoint.GET_PRESENT_PRICE.getPath())
-                .queryParam("FID_COND_MRKT_DIV_CODE", mktCode)
+                .queryParam("FID_COND_MRKT_DIV_CODE", RedisKeyConst.MktCode)
                 .queryParam("FID_INPUT_ISCD", stockCode)
                 .toUriString();
 
@@ -129,7 +132,7 @@ public class StockService {
     public List<StockChart> getStockChart(String stockCode, Period period) throws JsonProcessingException {
         String accessToken;
         // Redis에서 token 값 가져오기
-        accessToken = (String) redisTemplate.opsForValue().get(ApiTokenConst.AccessToken);
+        accessToken = (String) redisTemplate.opsForValue().get(RedisKeyConst.AccessToken);
 
         // Redis에 token 값이 없다면 새로운 토큰을 생성
         if (accessToken == null) {
@@ -175,7 +178,7 @@ public class StockService {
             String formattedEndDate = now.format(formatter);
 
             String url = UriComponentsBuilder.fromHttpUrl(baseUrl + ApiEndPoint.GET_PRESENT_PRICE.getPath())
-                    .queryParam("FID_COND_MRKT_DIV_CODE", mktCode)
+                    .queryParam("FID_COND_MRKT_DIV_CODE", RedisKeyConst.MktCode)
                     .queryParam("FID_INPUT_ISCD", stockCode)
                     .queryParam("FID_INPUT_DATE_1", formattedStartDate)
                     .queryParam("FID_INPUT_DATE_2", formattedEndDate)
@@ -268,6 +271,31 @@ public class StockService {
     }
 
     public List<InvestorRanking> getInvestorRanking() {
-        return stockMapper.findTop10Investors();
+        if (redisTemplate.hasKey(RedisKeyConst.ZsetKEY) == Boolean.FALSE) {
+            updateRankingsFromDB();
+        }
+
+        Set<ZSetOperations.TypedTuple<Object>> zset = zSetOperations.reverseRangeWithScores(RedisKeyConst.ZsetKEY, 0, 9);
+        List<InvestorRanking> rankingList = new ArrayList<>();
+
+        // ZSet 데이터를 InvestorRanking 객체로 변환 후 리스트에 추가
+        for (ZSetOperations.TypedTuple<Object> entry : zset) {
+            InvestorRanking ranking = InvestorRanking.builder()
+                    .nickName((String) entry.getValue())
+                    .profitPercentage(entry.getScore())
+                    .build();
+            rankingList.add(ranking);
+        }
+
+        return rankingList;
+    }
+    @Scheduled(fixedRate = 60 * 60 * 1000) // 1시간
+    public void updateRankingsFromDB() {
+        List<InvestorRanking> rankings = stockMapper.findTop10Investors();
+        redisTemplate.delete(RedisKeyConst.ZsetKEY);
+
+        for (InvestorRanking ranking : rankings) {
+            zSetOperations.add(RedisKeyConst.ZsetKEY, ranking.getNickName(), ranking.getProfitPercentage());
+        }
     }
 }

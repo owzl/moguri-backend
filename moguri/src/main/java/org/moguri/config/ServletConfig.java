@@ -15,8 +15,7 @@ import org.springframework.web.servlet.view.JstlView;
         "org.moguri.event.roulette.controller",
         "org.moguri.accountbook.controller",
         "org.moguri.stock.controller",
-        "org.moguri.stock.feignclient",
-        "org.moguri.stock.config"
+        "org.moguri.common.config"
 }) // Spring MVC용 컴포넌트 등록을 위한 스캔 패키지
 public class ServletConfig implements WebMvcConfigurer {
 
