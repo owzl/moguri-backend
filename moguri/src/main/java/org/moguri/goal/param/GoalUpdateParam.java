@@ -21,5 +21,5 @@ public class GoalUpdateParam {
     private Date endDate;
     private String goalCategory;
     private BigDecimal rewardAmount;
-
+    private long questId; // 추가
 }

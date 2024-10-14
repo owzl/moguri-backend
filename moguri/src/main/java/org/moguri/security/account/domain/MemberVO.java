@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class MemberVO {
-    private int memberId; // MEMBER_ID를 PK로 사용
+    private long memberId; // MEMBER_ID를 PK로 사용
     private String email; // 이메일
     private String nickName; // 닉네임
     private String password; // 비밀번호

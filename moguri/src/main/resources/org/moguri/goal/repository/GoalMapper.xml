@@ -19,26 +19,29 @@
         <result column="reward_amount" property="rewardAmount"></result>
     </resultMap>
 
-    <select id="getGoal" resultMap="GoalMap">
-        SELECT *
-        from Goal
-        WHERE goal_Id = #{goalId}
-    </select>
-
     <select id="findAll" resultType="org.moguri.goal.domain.Goal">
     <![CDATA[
         SELECT *
         FROM Goal
+        WHERE member_id = #{memberId}
         ORDER BY created_At DESC
-            LIMIT #{limit}
-        OFFSET #{offset}
+            LIMIT #{pageRequest.limit}
+        OFFSET #{pageRequest.page}
         ]]>
     </select>
 
     <select id="getTotalCount" resultType="java.lang.Integer">
         select count(*)
         from Goal
+        WHERE member_id = #{memberId}
     </select>
+
+    <select id="getGoal" resultMap="GoalMap">
+        SELECT *
+        from Goal
+        WHERE goal_Id = #{goalId}
+    </select>
+
 
     <insert id="create">
         insert into Goal (
@@ -69,8 +72,7 @@
 
     <update id="update">
         update Goal
-        set member_id      = #{memberId},
-        goal_Name      = #{goalName},
+        set goal_Name      = #{goalName},
         goal_Amount    = #{goalAmount},
         current_Amount = #{currentAmount},
         target_percent  = #{targetPercent},

@@ -11,12 +11,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoDTO {
+    long memberId;
     String email; // 사용자 정보 반환
     String nickname;
     List<String> roles;
 // MemberVO 객체를 받아 사용자 정보를 추출하고, 이를 UserInfoDTO로 변환
     public static UserInfoDTO of(MemberVO member) {
         return new UserInfoDTO(
+                member.getMemberId(),
                 member.getEmail(), // 이메일 사용
                 member.getNickName(), // 닉네임 사용
                 member.getAuthList().stream()

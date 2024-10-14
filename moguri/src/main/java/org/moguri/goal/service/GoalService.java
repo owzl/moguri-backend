@@ -1,13 +1,12 @@
 package org.moguri.goal.service;
 
 import lombok.RequiredArgsConstructor;
-import org.moguri.accountbook.domain.AccountBook;
 import org.moguri.accountbook.repository.AccountBookMapper;
-import org.moguri.accountbook.service.AccountBookService;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.PageRequest;
 import org.moguri.exception.MoguriLogicException;
 import org.moguri.goal.domain.Goal;
+import org.moguri.goal.domain.GoalQuest;
 import org.moguri.goal.param.GoalCreateParam;
 import org.moguri.goal.param.GoalUpdateParam;
 import org.moguri.goal.repository.GoalMapper;
@@ -17,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,21 +28,24 @@ public class GoalService {
     private final AccountBookMapper accountBookMapper;
     private final GoalQuestMapper goalQuestMapper;
 
+    /* 개별 목표 조회 */
     public Goal getGoal(Long goalId) {
         Goal goal = goalMapper.getGoal(goalId);
         return Optional.ofNullable(goal)
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
     }
 
-    public List<Goal> getList(PageRequest pageRequest) {
-        return goalMapper.findAll(pageRequest);
-
+    /* 목표 리스트 조회 */
+    public List<Goal> getList(PageRequest pageRequest, long memberId) {
+        return goalMapper.findAll(pageRequest, memberId);
     }
 
-    public int getTotalCount() {
-        return goalMapper.getTotalCount();
+    /* 목표 총 개수 */
+    public int getTotalCount(long memberId) {
+        return goalMapper.getTotalCount(memberId);
     }
 
+    /* 목표 수정 */
     public void update(GoalUpdateParam param) {
         Optional.ofNullable(param.getGoalId())
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
@@ -63,17 +63,19 @@ public class GoalService {
                 .endDate(param.getEndDate())
                 .goalCategory(param.getGoalCategory())
                 .rewardAmount(param.getRewardAmount())
+                .questId(param.getQuestId())
                 .build();
+
+        // questId를 업데이트할 Param에 추가
+        updateParam.setQuestId(param.getQuestId());
 
         // 저축 목표의 경우
         if (goal.getGoalCategory() == null) {
             // 사용자가 입력한 goalAmount를 설정
             updateParam.setGoalAmount(param.getGoalAmount());
-        }
-        // 지출 목표의 경우
-        else {
+        } else {
             // 지출 목표의 goalAmount를 계산
-            BigDecimal goalAmount = accountBookMapper.getGoalAmountForCategory(goal.getGoalCategory());
+            BigDecimal goalAmount = accountBookMapper.getGoalAmountForCategory(param.getQuestId());
             updateParam.setGoalAmount(goalAmount);
         }
 
@@ -81,33 +83,42 @@ public class GoalService {
         goalMapper.update(updateParam);
     }
 
-
+    /* 목표 생성 */
     public void create(GoalCreateParam param) {
         Goal goal = param.toEntity();
 
+        // questId를 Goal 객체에 설정
+        goal.setQuestId(param.getQuestId());
+
+        System.out.println("골 카테고리 받아온거: " + goal.getGoalCategory());
+        System.out.println("퀘스트 아이디 받아온거: " + goal.getQuestId());
+
+
         // 저축 목표의 경우
         if (goal.getGoalCategory() == null) {
-            // 사용자가 입력한 goalAmount를 설정
             if (param.getGoalAmount() == null) {
                 throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
             }
+            // 사용자가 입력한 goalAmount를 설정
             goal.setGoalAmount(param.getGoalAmount());
-        }
-        // 지출 목표의 경우
-        else {
+        } else {
+            // 지출 목표의 경우
             // 지출 목표의 goalAmount를 계산
-            BigDecimal goalAmount = accountBookMapper.getGoalAmountForCategory(goal.getGoalCategory());
+            BigDecimal goalAmount = accountBookMapper.getGoalAmountForCategory(param.getQuestId());
+
             if (goalAmount == null) {
                 throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
             }
             goal.setGoalAmount(goalAmount);
         }
 
+        System.out.println("골 완전체 : " + goal);
         // Goal을 데이터베이스에 저장
         goalMapper.create(goal);
     }
 
 
+    /* 목표 삭제 */
     public void delete(long goalId) {
         Optional.ofNullable(goalId)
                 .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));

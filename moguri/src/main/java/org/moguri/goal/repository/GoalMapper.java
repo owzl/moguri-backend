@@ -1,5 +1,6 @@
 package org.moguri.goal.repository;
 
+import org.apache.ibatis.annotations.Param;
 import org.moguri.common.response.PageRequest;
 import org.moguri.goal.domain.Goal;
 import org.moguri.goal.param.GoalUpdateParam;
@@ -7,6 +8,10 @@ import org.moguri.goal.param.GoalUpdateParam;
 import java.util.List;
 
 public interface GoalMapper {
+    List<Goal> findAll(@Param("pageRequest") PageRequest pageRequest, @Param("memberId") long memberId);
+
+    int getTotalCount(@Param("memberId") long memberId);
+
     Goal getGoal(long goalId);
 
     void create(Goal goal);
@@ -15,9 +20,6 @@ public interface GoalMapper {
 
     long delete(long goalId);
 
-    List<Goal> findAll(PageRequest pageRequest);
-
-    int getTotalCount();
 
     /* === 목표와 연동 === */
     // currentAmount 업데이트

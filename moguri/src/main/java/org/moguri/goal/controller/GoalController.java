@@ -25,31 +25,31 @@ public class GoalController {
 
     private final GoalService goalService;
 
+    // 목표 목록 조회
+    @GetMapping("/list/{memberId}")
+    public ApiResponse<?> getList(GoalGetRequest request, @PathVariable long memberId) {
+        // 페이지 요청 검증
+        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
+
+        // 목표 목록 조회
+        List<Goal> goals = goalService.getList(pageRequest, memberId);
+
+        // 총 목표 수 조회
+        int totalCount = goals.size();
+
+        // ApiResponse 반환
+        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount, goals.stream().map(GoalItem::of).toList()));
+    }
+
     @GetMapping("/{goalId}")
     public ApiResponse<?> getGoal(@PathVariable("goalId") long goalId) {
         Goal goal = goalService.getGoal(goalId);
         return ApiResponse.of(GoalItem.of(goal));
     }
 
-    // 목표 목록 조회
-    @GetMapping
-    public ApiResponse<?> getList(GoalGetRequest request) {
-        // 페이지 요청 검증
-        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
-        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
-
-        // 목표 목록 조회
-        List<Goal> goals = goalService.getList(pageRequest);
-
-        // 총 목표 수 조회
-        int totalCount = goalService.getTotalCount();
-
-        // ApiResponse 반환
-        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount, goals.stream().map(GoalItem::of).toList()));
-    }
-
     // 목표 추가
-    @PostMapping
+    @PostMapping("")
     public ApiResponse<?> create(@RequestBody GoalCreateRequest request) {
         GoalCreateParam param = request.convert();
         goalService.create(param);
@@ -121,6 +121,7 @@ public class GoalController {
         private Date endDate;
         private String goalCategory;
         private BigDecimal rewardAmount;
+        private long questId;
 
         public GoalCreateParam convert() {
             GoalCreateParam param = GoalCreateParam.builder()
@@ -133,6 +134,7 @@ public class GoalController {
                     .endDate(endDate)
                     .goalCategory(goalCategory)
                     .rewardAmount(rewardAmount)
+                    .questId(questId)
                     .build();
             return param;
         }

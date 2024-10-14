@@ -25,5 +25,5 @@ public class Goal {
     private Date endDate;
     private String goalCategory;
     private BigDecimal rewardAmount;
-
+    private long questId; // questId 필드 추가
 }

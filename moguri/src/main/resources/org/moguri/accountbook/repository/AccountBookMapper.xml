@@ -26,8 +26,9 @@
         <![CDATA[
         SELECT *
         FROM AccountBook
+        WHERE member_id = #{memberId}
         ORDER BY accountbook_id DESC
-            LIMIT #{limit} OFFSET #{offset}
+            LIMIT #{pageRequest.limit} OFFSET #{pageRequest.page}
         ]]>
     </select>
 
@@ -35,6 +36,7 @@
     <select id="getAccountBooksCount" resultType="java.lang.Integer">
         SELECT COUNT(*)
         FROM AccountBook
+        WHERE member_id = #{memberId}
     </select>
 
 
@@ -95,13 +97,7 @@
 
     <!-- === 목표와 연동 === -->
     <!-- 지출 목표 - currentAmount 구하기 -->
-    <!--<select id="getCurrentAmountForCategory" parameterType="String" resultType="java.math.BigDecimal">
-        SELECT SUM(amount)
-        FROM AccountBook
-        WHERE category = #{category}
-          AND transaction_date BETWEEN DATE_FORMAT(NOW() ,'%Y-%m-01') AND LAST_DAY(NOW())
-    </select>-->
-    <select id="getCurrentAmountForCategory" parameterType="String" resultType="java.math.BigDecimal">
+    <select id="getCurrentAmountForCategory" parameterType="map" resultType="java.math.BigDecimal">
         SELECT SUM(amount)
         FROM AccountBook
         WHERE category = #{category}
@@ -118,13 +114,15 @@
     </select>
 
     <!-- goalAmount 구하기 -->
-    <select id="getGoalAmountForCategory" parameterType="String" resultType="java.math.BigDecimal">
-        SELECT SUM(a.amount) * (1 - (MAX(g.target_percent) / 100)) AS adjusted_amount
+    <select id="getGoalAmountForCategory" parameterType="long" resultType="java.math.BigDecimal">
+        SELECT SUM(a.AMOUNT) * (1 - (q.TARGET_PERCENT / 100)) AS goal_amount
         FROM AccountBook a
-                 JOIN Goal g ON a.category = g.goal_Category
-        WHERE a.category = #{categoryId}
-          AND a.transaction_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH) AND LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
-        GROUP BY a.category;
+                JOIN GoalQuest q ON q.QUEST_ID = #{questId}
+                JOIN Category c ON c.CATEGORY_ID = q.CATEGORY_ID
+        WHERE a.CATEGORY = c.CATEGORY_NAME
+         AND a.TRANSACTION_DATE BETWEEN DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), '%Y-%m-01')
+           AND LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
+        GROUP BY a.CATEGORY;
     </select>
 
 

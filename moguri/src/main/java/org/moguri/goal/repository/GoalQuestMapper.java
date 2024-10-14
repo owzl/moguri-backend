@@ -12,4 +12,6 @@ public interface GoalQuestMapper {
 
     // 목표 퀘스트 개수 - 페이징
     int getTotalGoalQuestsCount();
+
+    GoalQuest findQuestByCategory(String goalCategory);
 }

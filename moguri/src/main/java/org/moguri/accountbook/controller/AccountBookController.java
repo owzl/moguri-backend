@@ -30,17 +30,18 @@ public class AccountBookController {
     private final AccountBookService service;
 
     /* 수입/지출 내역 리스트 조회 */
-    @GetMapping("")
-    public ApiResponse<?> getAccountBooks(AccountBookGetRequest request) {
+    @GetMapping("/list/{memberId}")
+    public ApiResponse<?> getAccountBooks(AccountBookGetRequest request, @PathVariable long memberId) {
         PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
 
-        List<AccountBook> accountBooks = service.getAccountBooks(pageRequest);
-        int totalCount = service.getTotalAccountBooksCount();
+        List<AccountBook> accountBooks = service.getAccountBooks(pageRequest, memberId);
+        int totalCount = accountBooks.size();
 
         return ApiResponse.of(MoguriPage.of(pageRequest, totalCount,
                 accountBooks.stream().map(AccountBookController.AccountBookItem::of).toList()));
     }
+
 
     /* 수입/지출 개별 내역 조회 */
     @GetMapping("/{accountBookId}")
@@ -78,6 +79,7 @@ public class AccountBookController {
     public static class AccountBookGetRequest {
         private int page = 0; // 현재 페이지 번호
         private int limit = 30; // 페이지당 항목 수
+
     }
 
     /* 내부 DTO 클래스 */

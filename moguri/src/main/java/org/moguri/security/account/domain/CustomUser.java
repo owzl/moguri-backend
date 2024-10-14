@@ -23,4 +23,9 @@ public class CustomUser extends User { // 확장
         super(vo.getEmail(), vo.getPassword(), vo.getAuthList()); // email 사용
         this.member = vo;
     }
+
+    // 사용자 ID 반환
+    public long getId() {
+        return member.getMemberId(); // MemberVO에서 ID 반환
+    }
 }

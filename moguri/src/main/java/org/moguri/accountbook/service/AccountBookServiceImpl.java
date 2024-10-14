@@ -14,9 +14,7 @@ import org.moguri.goal.repository.GoalMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -28,15 +26,15 @@ public class AccountBookServiceImpl implements AccountBookService {
 
     // 수입/지출 내역 리스트 조회
     @Override
-    public List<AccountBook> getAccountBooks(PageRequest pageRequest) {
+    public List<AccountBook> getAccountBooks(PageRequest pageRequest, long memberId) {
         log.info("Fetching account book list...");
-        return accountBookMapper.getAccountBooks(pageRequest);
+        return accountBookMapper.getAccountBooks(pageRequest, memberId);
     }
 
     // 수입/지출 내역 개수 - 페이징
     @Override
-    public int getTotalAccountBooksCount() {
-        return accountBookMapper.getAccountBooksCount();
+    public int getTotalAccountBooksCount(long memberId) {
+        return accountBookMapper.getAccountBooksCount(memberId);
     }
 
     // 수입/지출 개별 내역 조회
@@ -56,6 +54,7 @@ public class AccountBookServiceImpl implements AccountBookService {
 
             // 목표 조회
             Goal goal = goalMapper.findByGoalCategory(accountBook.getCategory());
+
 
             if (goal != null) {
                 // 저축 목표 - currentAmount 업데이트 (조건 추가)
@@ -130,17 +129,19 @@ public class AccountBookServiceImpl implements AccountBookService {
     /* === 목표와 연동 === */
     // 카테고리 이용하여 currentAmount 업데이트 메서드
     private void getCurrentAmountForCategory(String category, Goal goal) {
-        // 목표의 startDate와 endDate 가져오기
-        Date startDate = goal.getStartDate();
-        Date endDate = goal.getEndDate();
+        Map<String, Object> params = new HashMap<>();
+        params.put("category", category);
+        params.put("startDate", goal.getStartDate());
+        params.put("endDate", goal.getEndDate());
 
         // 해당 카테고리의 currentAmount 계산
-        BigDecimal newCurrentAmount = accountBookMapper.getCurrentAmountForCategory(category, startDate, endDate);
+        BigDecimal newCurrentAmount = accountBookMapper.getCurrentAmountForCategory(params);
+        log.info("계산된 newCurrentAmount: {}", newCurrentAmount);
 
         // Goal 객체의 currentAmount 업데이트
         goal.setCurrentAmount(newCurrentAmount);
 
-        // Goal 객체를 업데이트하는 메서드 호출
+        // Goal 객체를 수정하는 메서드 호출
         updateCurrentAmount(goal);
     }
 
@@ -170,4 +171,7 @@ public class AccountBookServiceImpl implements AccountBookService {
 
         goalMapper.updateCurrentAmount(updateParam);
     }
+
+
+
 }

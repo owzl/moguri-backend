@@ -42,4 +42,11 @@
         FROM GoalQuest
     </select>
 
+    <select id="findQuestByCategory" parameterType="int" resultType="GoalQuest">
+        SELECT *
+        FROM GoalQuest
+        WHERE category_id = #{categoryId}
+    </select>
+
+
 </mapper>
