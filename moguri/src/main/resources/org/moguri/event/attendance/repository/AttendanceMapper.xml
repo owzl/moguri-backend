@@ -20,7 +20,7 @@
             resultType="org.moguri.event.attendance.domain.Attendance">
         SELECT *
         FROM Attendance
-        LIMIT #{limit}
+                 LIMIT #{limit}
         OFFSET #{offset}
     </select>
 
@@ -32,11 +32,47 @@
 
     </select>
 
+    <select id="getMemberAttendances"
+            resultType="org.moguri.event.attendance.domain.Attendance">
+        SELECT *
+        FROM Attendance
+        WHERE member_id = #{memberId}
+    </select>
+
     <insert id="createAttendance" parameterType="Attendance">
         INSERT INTO Attendance (member_id, attendance_date)
         VALUES (#{memberId}, NOW())
 
         <selectKey resultType="Long" keyProperty="attendanceId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <select id="getMonthCount" resultType="int">
+        SELECT COUNT(*) AS attendance_count
+        FROM Attendance
+        WHERE member_id = #{memberId}
+            AND MONTH(attendance_date) = MONTH(CURDATE())
+          AND YEAR(attendance_date) = YEAR(CURDATE())
+    </select>
+
+    <select id="userReceivedCheck" resultType="boolean">
+        SELECT CASE
+                   WHEN COUNT(*) > 0 THEN TRUE
+                   ELSE FALSE
+                   END AS user_received_check
+        FROM RewardReceivedDate
+        WHERE MEMBER_ID = #{memberId}
+          AND RECEIVED_TYPE = #{receivedType}
+          AND MONTH(RECEIVED_DATE) = MONTH(CURDATE())
+          AND YEAR(RECEIVED_DATE) = YEAR(CURDATE())
+    </select>
+
+    <insert id="createAttendanceReceived" parameterType="org.moguri.event.attendance.domain.AttendanceReceived">
+        INSERT INTO RewardReceivedDate (MEMBER_ID, RECEIVED_TYPE, RECEIVED_DATE)
+        VALUES (#{memberId}, #{receivedType}, NOW())
+
+        <selectKey resultType="Long" keyProperty="receivedId" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>

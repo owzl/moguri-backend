@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.stock.repository.StockMapper">
+
+    <!-- 키워드를 포함하는 주식 검색 기능 -->
+    <select id="findStockByKeyword" resultType="org.moguri.stock.domain.Stock">
+        SELECT *
+        FROM Stock
+        WHERE (stock_code LIKE CONCAT('%', #{keyword}, '%')
+            OR name_kr LIKE CONCAT('%', #{keyword}, '%')
+            OR name_en LIKE CONCAT('%', #{keyword}, '%'))
+        ORDER BY CASE
+                     WHEN name_kr LIKE CONCAT(#{keyword}, '%') THEN 0
+                     WHEN name_en LIKE CONCAT(#{keyword}, '%') THEN 0
+                     ELSE 1
+                     END,
+                 LEAST(
+                         INSTR(stock_code, #{keyword}),
+                         INSTR(name_kr, #{keyword}),
+                         INSTR(name_en, #{keyword})
+                 ) ASC,
+                 name_kr ASC
+            LIMIT #{pageRequest.limit}
+        OFFSET #{pageRequest.page}
+    </select>
+
+    <!-- 키워드 검색 총 결과 개수를 반환하는 쿼리 -->
+    <select id="findSearchTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM Stock
+        WHERE (stock_code LIKE CONCAT('%', #{keyword}, '%')
+            OR name_kr LIKE CONCAT('%', #{keyword}, '%')
+            OR name_en LIKE CONCAT('%', #{keyword}, '%'))
+    </select>
+
+    <insert id="saveTrade" parameterType="org.moguri.stock.param.StockTradeParam">
+        INSERT INTO trade_history (member_id,
+                                   stock_code,
+                                   trade_type,
+                                   price,
+                                   quantity,
+                                   total_amount,
+                                   trade_at)
+        VALUES (#{memberId},
+                #{stockCode},
+                #{tradeType},
+                #{price},
+                #{quantity},
+                #{totalAmount},
+                NOW())
+    </insert>
+
+    <select id="findRemainingQuantity" resultType="int">
+        SELECT (SUM(CASE WHEN trade_type = 'BUY' THEN quantity ELSE 0 END) -
+                SUM(CASE WHEN trade_type = 'SELL' THEN quantity ELSE 0 END)) AS remaining_quantity
+        FROM trade_history
+        WHERE member_id = #{memberId}
+          AND stock_code = #{stockCode}
+    </select>
+
+    <!-- 거래 내역과 주식 정보를 조인하여 조회 -->
+    <select id="findTradeByStockCode" resultType="org.moguri.stock.domain.TradeHistory">
+        SELECT th.price,
+               th.quantity,
+               th.total_amount AS totalAmount,
+               th.trade_type   AS tradeType,
+               th.trade_at     AS tradeAt,
+               s.name_kr       AS stockNameKR,
+               s.market_type   AS marketType
+        FROM trade_history th
+                 JOIN Stock s ON th.stock_code = s.stock_code
+        WHERE th.member_id = #{memberId}
+          AND th.stock_code = #{stockCode}
+        ORDER BY th.trade_at DESC
+            LIMIT #{pageRequest.limit}
+        OFFSET #{pageRequest.page}
+    </select>
+
+    <select id="findHistoryTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM trade_history th
+        WHERE th.member_id = #{memberId}
+          AND th.stock_code = #{stockCode}
+    </select>
+
+    <select id="findAllUserStocks" resultType="org.moguri.stock.domain.UserStock">
+        SELECT th.stock_code AS stockCode,
+               s.name_kr     AS nameKr,
+               s.market_type AS marketType,
+               SUM(CASE WHEN th.trade_type = 'BUY' THEN th.quantity
+                        WHEN th.trade_type = 'SELL' THEN -th.quantity
+                        ELSE 0 END) AS quantity,
+               CASE WHEN SUM(CASE WHEN th.trade_type = 'BUY' THEN th.quantity ELSE 0 END) > 0 THEN
+                        ROUND(SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END)
+                            /SUM(CASE WHEN th.trade_type = 'BUY' THEN th.quantity ELSE 0 END)
+                        ) ELSE 0 END AS averagePrice
+        FROM trade_history th
+                 JOIN Stock s ON th.stock_code = s.stock_code
+        WHERE th.member_id = #{memberId}
+        GROUP BY th.stock_code, s.name_kr, s.market_type
+        HAVING quantity > 0
+    </select>
+
+    <select id="findTop10Investors" resultType="org.moguri.stock.domain.InvestorRanking">
+        SELECT
+            m.nickName AS nickName,
+            ROUND(
+                    (SUM(CASE WHEN th.trade_type = 'SELL' THEN th.price * th.quantity ELSE 0 END)
+                        - SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END))
+                        / NULLIF(SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END), 0)
+                        * 100, 1
+            ) AS profitPercentage
+        FROM trade_history th
+                 JOIN Member m ON th.member_id = m.member_id
+        WHERE th.trade_At BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND NOW()
+          AND th.trade_type IN ('BUY', 'SELL')
+        GROUP BY m.nickName
+        HAVING SUM(CASE WHEN th.trade_type = 'BUY' THEN th.price * th.quantity ELSE 0 END) > 0
+        ORDER BY profitPercentage DESC
+            LIMIT 10
+    </select>
+</mapper>

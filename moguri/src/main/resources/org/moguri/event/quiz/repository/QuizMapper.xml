@@ -28,7 +28,7 @@
             resultType="org.moguri.event.quiz.domain.Quiz">
         SELECT *
         FROM Quiz
-        LIMIT #{limit}
+                 LIMIT #{limit}
         OFFSET #{offset}
     </select>
 
@@ -67,4 +67,23 @@
         WHERE quiz_id= #{quizId}
     </delete>
 
+    <select id="hasUserQuizPartToday" resultType="boolean">
+        SELECT CASE
+                   WHEN COUNT(*) > 0 THEN TRUE
+                   ELSE FALSE
+                   END AS has_quizpart_today
+        FROM QuizPart
+        WHERE MEMBER_ID = #{memberId}
+          AND QUIZ_TYPE = #{quizType}
+          AND PART_DATE = CURDATE()
+    </select>
+
+    <insert id="createQuizPartToday" parameterType="org.moguri.event.quiz.domain.QuizPart">
+        INSERT INTO QuizPart (MEMBER_ID, QUIZ_TYPE, PART_DATE)
+        VALUES (#{memberId}, #{quizType}, NOW())
+
+        <selectKey resultType="Long" keyProperty="quizpartId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
 </mapper>

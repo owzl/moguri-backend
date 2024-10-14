@@ -37,18 +37,33 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public Member getMember(Long id) {
-        Member member = Optional.ofNullable(memberMapper.findById(id)).orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
-
-        return member;
+        return Optional.ofNullable(memberMapper.findById(id))
+                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
     }
 
     public void remove(Long id) {
-        Optional.ofNullable(memberMapper.findById(id)).orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        Optional.ofNullable(memberMapper.findById(id))
+                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
         memberMapper.delete(id);
     }
 
-    public void update(Long id, MemberUpdateParam param) {
-        Optional.ofNullable(memberMapper.findById(id)).orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
-        memberMapper.update(id, param);
+    public void update(MemberUpdateParam param) {
+        Optional.ofNullable(memberMapper.findById(param.getId()))
+                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        memberMapper.update(param); // param만 전달
+    }
+    // 코튼 캔디 업데이트 메소드 추가
+    public void updateCottonCandy(Long id, int cottonCandy) {
+        // 멤버가 존재하는지 확인
+        Optional.ofNullable(memberMapper.findById(id))
+                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+
+        // 코튼 캔디 업데이트
+        memberMapper.updateCottonCandy(id, cottonCandy);
+    }
+    public int getCottonCandy(Long id) {
+        Member member = Optional.ofNullable(memberMapper.findById(id))
+                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+        return member.getCottonCandy();
     }
 }

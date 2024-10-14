@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.ApiResponse;
-
 import lombok.Data;
-
 import org.moguri.common.response.MoguriPage;
 import org.moguri.common.response.PageRequest;
 import org.moguri.common.validator.PageLimitSizeValidator;
@@ -63,7 +61,7 @@ public class MemberController {
     @PatchMapping("/{id}")
     public ApiResponse<?> update(@PathVariable("id") Long id, @RequestBody MemberUpdateRequest request) {
         MemberUpdateParam param = request.convert();
-        memberService.update(id, param);
+        memberService.update(param);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
@@ -73,21 +71,29 @@ public class MemberController {
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
+    @PatchMapping("/{id}/cotton-candy")
+    public ApiResponse<?> updateCottonCandy(@PathVariable("id") Long id, @RequestBody CottonCandyUpdateRequest request) {
+        memberService.updateCottonCandy(id, request.getCottonCandy());
+        return ApiResponse.of(ReturnCode.SUCCESS);
+    }
+
+    @GetMapping("/{id}/cotton-candy")
+    public ApiResponse<?> getCottonCandy(@PathVariable("id") Long id) {
+        int cottonCandy = memberService.getCottonCandy(id);
+        return ApiResponse.of(cottonCandy);
+    }
+
+
     @Data
     private static class MemberGetRequest {
-
         private int page = 0;
-        private int limit = 30;
-        //default 값
+        private int limit = 30; // default 값
     }
 
     @Data
     private static class MemberItem {
-
         private String email; // id
-
         private String password;
-
         private String nickName;
 
         private static MemberItem of(Member member) {
@@ -101,36 +107,35 @@ public class MemberController {
 
     @Data
     private static class MemberCreateRequest {
-
         private String email; // id
-
         private String password;
-
         private String nickName;
 
         public MemberCreateParam convert(PasswordEncoder passwordEncoder) {
-            MemberCreateParam param = MemberCreateParam.builder()
+            return MemberCreateParam.builder()
                     .email(email)
                     .password(passwordEncoder.encode(password))
                     .nickName(nickName)
                     .build();
-            return param;
         }
     }
 
     @Data
     private static class MemberUpdateRequest {
-
         private String password;
-
         private String nickName;
 
         public MemberUpdateParam convert() {
-            MemberUpdateParam param = MemberUpdateParam.builder()
+            return MemberUpdateParam.builder()
                     .password(password)
                     .nickName(nickName)
                     .build();
-            return param;
         }
+    }
+
+    // CottonCandyUpdateRequest 데이터 클래스 추가
+    @Data
+    private static class CottonCandyUpdateRequest {
+        private int cottonCandy; // 업데이트할 코튼 캔디 수량
     }
 }

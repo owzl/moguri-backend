@@ -8,4 +8,7 @@ public class Output {
 
     @JsonProperty("stck_prpr")
     private String stck_prpr;
+
+    @JsonProperty("prdy_ctrt")
+    private String prdy_ctrt;
 }

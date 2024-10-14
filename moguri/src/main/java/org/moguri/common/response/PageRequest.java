@@ -3,8 +3,10 @@ package org.moguri.common.response;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
+@RequiredArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PageRequest {
     private int page; // 요청 페이지
@@ -14,5 +16,7 @@ public class PageRequest {
         return new PageRequest(page, limit);
     }
 
-    public int getOffset() { return page * limit; }
+    public int getOffset() {
+        return page * limit;
+    }
 }

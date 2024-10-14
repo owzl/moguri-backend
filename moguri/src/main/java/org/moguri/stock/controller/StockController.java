@@ -1,13 +1,27 @@
 package org.moguri.stock.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.ApiResponse;
+import org.moguri.common.response.MoguriPage;
+import org.moguri.common.response.PageRequest;
+import org.moguri.common.validator.PageLimitSizeValidator;
+import org.moguri.stock.domain.InvestorRanking;
+import org.moguri.stock.domain.Stock;
+import org.moguri.stock.domain.TradeHistory;
+import org.moguri.stock.domain.UserStock;
 import org.moguri.stock.enums.Period;
+import org.moguri.stock.enums.TradeType;
+import org.moguri.stock.param.StockTradeParam;
 import org.moguri.stock.service.StockService;
+import org.moguri.stock.stockResponse.Output;
 import org.moguri.stock.stockResponse.StockChart;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -18,85 +32,186 @@ public class StockController {
     private final StockService stockService;
 
     @GetMapping("/price/{stockCode}")
-    public ApiResponse<?> getPrice(@PathVariable("stockCode") String stockCode) {
-        int presentPrice = stockService.getPresentPrice(stockCode);
-        return ApiResponse.of(presentPrice);
+    public ApiResponse<?> getPrice(@PathVariable("stockCode") String stockCode) throws JsonProcessingException {
+        Output output = stockService.getPresentPrice(stockCode);
+        return ApiResponse.of(PriceItem.of(output));
     }
 
     @GetMapping("/chart/{stockCode}")
     public ApiResponse<?> getStockChart(@PathVariable("stockCode") String stockCode, @RequestParam(defaultValue = "DAY") Period period) throws JsonProcessingException {
-        stockService.getToken();
         List<StockChart> stockChart = stockService.getStockChart(stockCode, period);
         return ApiResponse.of(stockChart);
     }
 
     @GetMapping
-    public ApiResponse<?> getToken() {
-        String token = stockService.getToken();
-        return ApiResponse.of(token);
+    public ApiResponse<?> getStockByKeyword(@RequestParam String keyword, StockGetRequest request) {
+        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
+
+        List<Stock> stocks = stockService.findStockByKeyword(pageRequest, keyword);
+        int totalCount = stockService.getSearchTotalCount(keyword);
+
+        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount,
+                stocks.stream().map(StockController.StockItem::of).toList()));
     }
-//    @GetMapping
-//    public ApiResponse<?> getStockName(@RequestParam String name) {
-//        stockService.findStockByName(name);
-//        return ApiResponse.of(ReturnCode.SUCCESS);
-//    }
 
-//    @PostMapping("/price/{stockCode}")
-//    public ApiResponse<?> buyStock(@PathVariable String stockCode, @RequestBody StockBuyRequest request) {
-//        StockParam param = request.convert(stockCode);
-//        stockService.buyStock(param);
-//
-//        return ApiResponse.of(ReturnCode.SUCCESS);
-//    }
-//
-//    @PatchMapping("/price/{stockCode}")
-//    public ApiResponse<?> sellStock(@PathVariable String stockCode, @RequestBody StockSellRequest request) {
-//        StockParam param = request.convert(stockCode);
-//        stockService.sellStock(param);
-//
-//        memberService.update();
-//        return ApiResponse.of(ReturnCode.SUCCESS);
-//    }
+    @PostMapping("/price/{stockCode}/{tradeType}")
+    public ApiResponse<?> tradeStock(@PathVariable("stockCode") String stockCode, @PathVariable("tradeType") TradeType tradeType, @RequestBody StockTradeRequest request) {
+        StockTradeParam param = request.convert(stockCode, tradeType);
+        stockService.tradeStock(param);
 
-//    @Data
-//    private static class StockBuyRequest {
-//
-//        private long memberId; // id
-//
-//        private int price;
-//
-//        private int quantity;
-//
-//        public StockParam convert(String stockCode) {
-//            StockParam param = StockParam.builder()
-//                    .stockId(stockCode)
-//                    .memberId(memberId)
-//                    .price(price)
-//                    .quantity(quantity)
-//                    .tradeType(TradeType.BUY)
-//                    .build();
-//            return param;
-//        }
-//    }
-//
-//    @Data
-//    private static class StockSellRequest {
-//
-//        private long memberId; // id
-//
-//        private int price;
-//
-//        private int quantity;
-//
-//        public StockParam convert(String stockCode) {
-//            StockParam param = StockParam.builder()
-//                    .stockId(stockCode)
-//                    .memberId(memberId)
-//                    .price(price)
-//                    .quantity(quantity)
-//                    .tradeType(TradeType.SELL)
-//                    .build();
-//            return param;
-//        }
-//    }
+        return ApiResponse.of(ReturnCode.SUCCESS);
+    }
+
+    @GetMapping("/{stockCode}/{memberId}")
+    public ApiResponse<?> getTradeHistory(@PathVariable("stockCode") String stockCode, @PathVariable("memberId") Long memberId, HistoryGetRequest request) {
+        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
+
+        List<TradeHistory> tradeHistory = stockService.getTradeHistory(pageRequest, memberId, stockCode);
+        int totalCount = stockService.getHistoryTotalCount(memberId, stockCode);
+
+        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount,
+                tradeHistory.stream().map(HistoryItem::of).toList()));
+    }
+
+    @GetMapping("/{memberId}")
+    public ApiResponse<?> getAllUserStocks(@PathVariable("memberId") Long memberId) {
+        List<UserStock> userStocks = stockService.getAllUserStocks(memberId);
+        return ApiResponse.of(userStocks);
+    }
+
+    @GetMapping("/ranking")
+    public ApiResponse<?> getRanking() {
+        List<InvestorRanking> investorRanking = stockService.getInvestorRanking();
+        return ApiResponse.of(investorRanking);
+    }
+
+    @Data
+    private static class UserStockItem {
+
+        private String stockCode;
+
+        private String nameKr;
+
+        private String marketType;
+
+        private int quantity;
+
+        private int averagePrice;
+
+        private static UserStockItem of(UserStock userStock) {
+            UserStockItem converted = new UserStockItem();
+            converted.stockCode = userStock.getStockCode();
+            converted.nameKr = userStock.getNameKr();
+            converted.marketType = userStock.getMarketType();
+            converted.quantity = userStock.getQuantity();
+            converted.averagePrice = userStock.getAveragePrice();
+            return converted;
+        }
+    }
+
+    @Data
+    private static class PriceItem {
+
+        private String prdy_ctrt; // id
+
+        private String stck_prpr;
+
+        private static PriceItem of(Output output) {
+            PriceItem converted = new PriceItem();
+            converted.prdy_ctrt = output.getPrdy_ctrt();
+            converted.stck_prpr = output.getStck_prpr();
+            return converted;
+        }
+    }
+
+    @Data
+    private static class StockItem {
+
+        private String stockCode; // id
+
+        private String stockNameKR;
+
+        private String stockNameEN;
+
+        private String marketType;
+
+        private static StockItem of(Stock stock) {
+            StockItem converted = new StockItem();
+            converted.stockCode = stock.getStockCode();
+            converted.stockNameKR = stock.getNameKr();
+            converted.stockNameEN = stock.getNameEn();
+            converted.marketType = stock.getMarketType();
+            return converted;
+        }
+    }
+
+    @Data
+    private static class HistoryItem {
+        private String stockNameKR;
+
+        private String marketType;
+
+        private int price;
+
+        private int quantity;
+
+        private int totalAmount;
+
+        private TradeType tradeType;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private Date tradeAt;
+
+        private static HistoryItem of(TradeHistory history) {
+            HistoryItem converted = new HistoryItem();
+            converted.stockNameKR = history.getStockNameKR();
+            converted.marketType = history.getMarketType();
+            converted.price = history.getPrice();
+            converted.quantity = history.getQuantity();
+            converted.totalAmount = history.getTotalAmount();
+            converted.tradeType = history.getTradeType();
+            converted.tradeAt = history.getTradeAt();
+            return converted;
+        }
+    }
+
+    @Data
+    private static class HistoryGetRequest {
+        private int page = 0;
+        private int limit = 10;
+        //default 값
+    }
+
+    @Data
+    private static class StockGetRequest {
+        private int page = 0;
+        private int limit = 20;
+        //default 값
+    }
+
+    @Data
+    private static class StockTradeRequest {
+
+        private long memberId; // 고유 id
+
+        private int price;
+
+        private int quantity;
+
+        private int totalAmount;
+
+        public StockTradeParam convert(String stockCode, TradeType tradeType) {
+            StockTradeParam param = StockTradeParam.builder()
+                    .stockCode(stockCode)
+                    .memberId(memberId)
+                    .price(price)
+                    .quantity(quantity)
+                    .totalAmount(totalAmount)
+                    .tradeType(tradeType)
+                    .build();
+            return param;
+        }
+    }
 }

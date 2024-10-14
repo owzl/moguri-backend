@@ -1,5 +1,6 @@
 package org.moguri.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.client.RestTemplate;
 
 import javax.sql.DataSource;
 
@@ -23,19 +26,25 @@ import javax.sql.DataSource;
 @MapperScan(basePackages = {"org.moguri.member.repository",
                             "org.moguri.event.attendance.repository",
                             "org.moguri.event.quiz.repository",
+                            "org.moguri.event.roulette.repository",
                             "org.moguri.accountbook.repository",
-                            "org.moguri.goal.repository"})
+                            "org.moguri.goal.repository",
+                            "org.moguri.stock.repository",
+                            "org.moguri.moguri.repository"})
 
 @ComponentScan(basePackages = {"org.moguri.member.service",
                                "org.moguri.event.attendance.service",
                                "org.moguri.event.quiz.service",
+                               "org.moguri.event.roulette.service",
                                "org.moguri.accountbook.service",
                                "org.moguri.goal.service",
                                "org.moguri.stock.service",
-                               "org.moguri.stock.config"})
+                               "org.moguri.common.config",
+                               "org.moguri.moguri.service"})
 
 @Slf4j
 @EnableTransactionManagement
+@EnableScheduling
 public class RootConfig {
 
     @Value("${jdbc.driver}")
@@ -75,5 +84,15 @@ public class RootConfig {
     @Bean
     public DataSourceTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 }

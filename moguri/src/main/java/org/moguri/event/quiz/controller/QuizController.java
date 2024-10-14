@@ -1,18 +1,23 @@
 package org.moguri.event.quiz.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.ApiResponse;
 import org.moguri.common.response.MoguriPage;
 import org.moguri.common.response.PageRequest;
 import org.moguri.common.validator.PageLimitSizeValidator;
 import org.moguri.event.quiz.domain.Quiz;
+import org.moguri.event.quiz.domain.QuizPart;
 import org.moguri.event.quiz.param.QuizCreateParam;
 import org.moguri.event.quiz.param.QuizUpdateParam;
 import org.moguri.event.quiz.service.QuizService;
+import org.moguri.event.quiz.param.QuizCreatePartParam;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -63,6 +68,21 @@ public class QuizController {
     @DeleteMapping("/{quizId}")
     public ApiResponse<ReturnCode> delete(@PathVariable long quizId) {
         quizService.deleteQuiz(quizId);
+        return ApiResponse.of(ReturnCode.SUCCESS);
+    }
+
+    @GetMapping("/part/{memberId}/{quizType}")
+    public ApiResponse<?> hasUserQuizPartToday(@PathVariable long memberId, @PathVariable long quizType) {
+        boolean partPlay = quizService.hasUserQuizPartToday(memberId, quizType);
+        return ApiResponse.of(QuizPartItem.of(partPlay));
+    }
+
+    @PostMapping("/part")
+    public ApiResponse<ReturnCode> createPart(@RequestBody QuizCreatePartRequest request) {
+
+        QuizCreatePartParam param = request.convert();
+        quizService.createQuizPartToday(param.toEntity());
+
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
@@ -145,6 +165,33 @@ public class QuizController {
                     .example3(example3)
                     .example4(example4)
                     .answer(answer)
+                    .build();
+        }
+    }
+
+    @Data
+    private static class QuizPartItem {
+        private boolean partPlay;
+
+        private static QuizPartItem of(boolean part) {
+            QuizPartItem converted = new QuizPartItem();
+            converted.setPartPlay(part);
+            return converted;
+        }
+    }
+
+    @Data
+    public static class QuizCreatePartRequest {
+        private long memberId;
+        private long quizType;
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+        private Date partDate;
+
+        public QuizCreatePartParam convert() {
+            return QuizCreatePartParam.builder()
+                    .memberId(memberId)
+                    .quizType(quizType)
+                    .partDate(partDate)
                     .build();
         }
     }

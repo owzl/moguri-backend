@@ -6,11 +6,7 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @AllArgsConstructor
-public class MemberStock {
-
-    private long memberId;
-    private long stockId;
-    private int stockQuantity;
-    private int buyPrice;
-
+public class InvestorRanking {
+    private String nickName;
+    private double profitPercentage;
 }

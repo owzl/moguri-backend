@@ -27,5 +27,11 @@ public class ApiResponse<T> {
 
         return response;
     }
+    public static <T> ApiResponse<T> error(ReturnCode returnCode) {
+        ApiResponse<T> response = new ApiResponse<>();
+        response.returnCode = returnCode.getReturnCode();
+        response.returnMessage = returnCode.getReturnMessage();
+        return response;
+    }
 }
 
