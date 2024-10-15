@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfoDTO {
-    Integer  memberId; // 사용자의 ID 추가
+    long  memberId; // 사용자의 ID 추가
     String email; // 사용자 정보 반환
     String nickname;
     List<String> roles;
