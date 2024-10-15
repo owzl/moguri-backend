@@ -51,17 +51,19 @@ public class MoguriController {
     @Data
     private static class MoguriGetRequest {
         private int page = 0;
-        private int limit = 8; // default 값
+        private int limit = 12; // default 값
     }
 
     @Data
     private static class MoguriItem {
+        private Long moguriId; // moguriId 추가
         private String moguriName;
         private int moguriPrice;
         private String filePath;
 
         private static MoguriItem of(Moguri moguri) {
             MoguriItem converted = new MoguriItem();
+            converted.moguriId = moguri.getMoguriId(); // moguriId 할당
             converted.moguriName = moguri.getMoguriName();
             converted.moguriPrice = moguri.getMoguriPrice();
             converted.filePath = moguri.getFilePath();

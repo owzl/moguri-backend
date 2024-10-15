@@ -13,7 +13,7 @@
             file_path AS filePath
         FROM
             MoguriStore
-                LIMIT #{pageRequest.limit}, #{pageRequest.page}
+                LIMIT #{pageRequest.limit} OFFSET #{pageRequest.page}
     </select>
 
     <!-- findAllUserMoguri -->
