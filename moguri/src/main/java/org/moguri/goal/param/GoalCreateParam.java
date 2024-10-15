@@ -19,9 +19,12 @@ public class GoalCreateParam {
     private String goalName;
     private BigDecimal goalAmount;
     private BigDecimal currentAmount;
+    private BigDecimal targetPercent;
     private Date startDate;
     private Date endDate;
     private String goalCategory;
+    private BigDecimal rewardAmount;
+    private long questId; // 추가
 
     public Goal toEntity() {
         Goal goal = Goal.builder()
@@ -29,9 +32,13 @@ public class GoalCreateParam {
                 .goalName(goalName)
                 .goalAmount(goalAmount)
                 .currentAmount(currentAmount)
+                .targetPercent(targetPercent)
                 .startDate(startDate)
                 .endDate(endDate)
-                .goalCategory(goalCategory).build();
+                .goalCategory(goalCategory)
+                .rewardAmount(rewardAmount)
+                .questId(questId)
+                .build();
         return goal;
     }
 }

@@ -2,72 +2,176 @@ package org.moguri.accountbook.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.moguri.accountbook.domain.AccountBook;
 import org.moguri.accountbook.param.AccountBookUpdateParam;
 import org.moguri.accountbook.repository.AccountBookMapper;
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.PageRequest;
 import org.moguri.exception.MoguriLogicException;
+import org.moguri.goal.domain.Goal;
+import org.moguri.goal.param.GoalUpdateParam;
+import org.moguri.goal.repository.GoalMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AccountBookServiceImpl implements AccountBookService {
 
     private final AccountBookMapper accountBookMapper;
+    private final GoalMapper goalMapper;
 
+    // 수입/지출 내역 리스트 조회
     @Override
     public List<AccountBook> getAccountBooks(PageRequest pageRequest, long memberId) {
-        List<AccountBook> res = null;
-        try {
-            log.info("멤버아이디: {}", memberId);
-
-            // memberId와 PageRequest를 Map 형태로 전달하여 accountBookMapper의 getAccountBooks 호출
-            Map<String, Object> params = new HashMap<>();
-            params.put("pageRequest", pageRequest);
-            params.put("memberId", memberId);
-
-            res = accountBookMapper.getAccountBooks(params); // 수정된 호출
-
-        } catch (Exception e) {
-            log.info("에러 :::::::::::::::: {}", e.getMessage());
-        }
-        log.info("res ::::::::::::: {}", res);
-        return res;
+        log.info("Fetching account book list...");
+        return accountBookMapper.getAccountBooks(pageRequest, memberId);
     }
 
+    // 수입/지출 내역 개수 - 페이징
     @Override
-    public int getTotalAccountBooksCount(long memberId) { // memberId의 타입 변경
-        log.info("Fetching account book count for memberId: {}", memberId);
+    public int getTotalAccountBooksCount(long memberId) {
         return accountBookMapper.getAccountBooksCount(memberId);
     }
 
+    // 수입/지출 개별 내역 조회
     @Override
-    public AccountBook getAccountBook(long accountBookId, long memberId) { // memberId의 타입 변경
-        AccountBook accountBook = Optional.ofNullable(accountBookMapper.getAccountBook(accountBookId, memberId))
-                .orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
+    public AccountBook getAccountBook(long accountBookId) {
+        AccountBook accountBook = Optional.ofNullable(accountBookMapper.getAccountBook(accountBookId)).orElseThrow(() -> new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY));
         return accountBook;
     }
 
+    // 수입/지출 내역 등록
     @Override
     public void createAccountBook(AccountBook accountBook) {
-        accountBookMapper.createAccountBook(accountBook);
+
+        try {
+            // 가계부 항목 생성
+            accountBookMapper.createAccountBook(accountBook);
+
+            // 목표 조회
+            Goal goal = goalMapper.findByGoalCategory(accountBook.getCategory());
+
+
+            if (goal != null) {
+                // 저축 목표 - currentAmount 업데이트 (조건 추가)
+                if (accountBook.getType().equals("저축")) { // 타입이 '저축'일 경우에만 호출
+                    updateCurrentAmountByDescription(accountBook.getDescription());
+                }else{
+                    // 지출 목표 - currentAmount 업데이트
+                    getCurrentAmountForCategory(accountBook.getCategory(), goal);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
+        }
     }
 
+    // 수입/지출 내역 수정
     @Override
-    public void updateAccountBook(AccountBookUpdateParam param, long memberId) { // memberId의 타입 변경
-        accountBookMapper.updateAccountBook(param.toEntity());
+    public void updateAccountBook(AccountBookUpdateParam param) {
+        try {
+            // 가계부 항목 수정
+            accountBookMapper.updateAccountBook(param.toEntity());
+
+            // 목표 조회
+            Goal goal = goalMapper.findByGoalCategory(param.getCategory());
+
+            // 저축 목표 - currentAmount 업데이트 (조건 추가)
+            if (param.getType().equals("저축")) {
+                updateCurrentAmountByDescription(param.getDescription());
+            } else if (goal != null) {
+                // 지출 목표 - currentAmount 업데이트
+                getCurrentAmountForCategory(param.getCategory(), goal);
+            }
+
+        } catch (Exception e) {
+            throw new MoguriLogicException(ReturnCode.WRONG_PARAMETER);
+        }
     }
 
+
+    // 수입/지출 내역 삭제
     @Override
-    public void deleteAccountBook(@Param("accountBookId")long accountBookId, @Param("memberId") long memberId) { // memberId의 타입 변경
-        accountBookMapper.deleteAccountBook(accountBookId, memberId);
+    public void deleteAccountBook(long accountBookId) {
+        try {
+            // 삭제할 가계부 항목 조회
+            AccountBook accountBook = accountBookMapper.getAccountBook(accountBookId);
+
+            if (accountBook != null) {
+                // 가계부 항목 삭제
+                accountBookMapper.deleteAccountBook(accountBookId);
+
+                // 목표 조회
+                Goal goal = goalMapper.findByGoalCategory(accountBook.getCategory());
+
+                // 저축 목표 - currentAmount 업데이트
+                if (accountBook.getType().equals("저축")) {
+                    updateCurrentAmountByDescription(accountBook.getDescription());
+                } else if (goal != null) {
+                    // 지출 목표 - currentAmount 업데이트
+                    getCurrentAmountForCategory(accountBook.getCategory(), goal);
+                }
+            } else {
+                throw new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY);
+            }
+        } catch (Exception e) {
+            throw new MoguriLogicException(ReturnCode.NOT_FOUND_ENTITY);
+        }
     }
+
+
+
+    /* === 목표와 연동 === */
+    // 카테고리 이용하여 currentAmount 업데이트 메서드
+    private void getCurrentAmountForCategory(String category, Goal goal) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("category", category);
+        params.put("startDate", goal.getStartDate());
+        params.put("endDate", goal.getEndDate());
+
+        // 해당 카테고리의 currentAmount 계산
+        BigDecimal newCurrentAmount = accountBookMapper.getCurrentAmountForCategory(params);
+        log.info("계산된 newCurrentAmount: {}", newCurrentAmount);
+
+        // Goal 객체의 currentAmount 업데이트
+        goal.setCurrentAmount(newCurrentAmount);
+
+        // Goal 객체를 수정하는 메서드 호출
+        updateCurrentAmount(goal);
+    }
+
+
+    // 거래 상세 내역로 저축 목표 currentAmount 업데이트
+    private void updateCurrentAmountByDescription(String description) {
+        log.info("현재 저축 금액 업뎃: {}", description);
+
+        // 해당 거래 상세 내역에 대한 currentAmount 계산
+        BigDecimal newCurrentAmount = accountBookMapper.getCurrentAmountForDescription(description);
+
+        // 목표 조회 (description을 기준으로)
+        Goal goal = goalMapper.findByGoalName(description); // goal_name을 기준으로 목표 조회
+        if (goal != null) {
+            // 목표의 currentAmount 업데이트
+            goal.setCurrentAmount(goal.getCurrentAmount().add(newCurrentAmount)); // 새로운 currentAmount 설정
+            updateCurrentAmount(goal); // Goal 객체를 업데이트하는 메서드 호출
+        }
+    }
+
+    // currentAmount 업데이트하는 본체 - Goal 객체를 받는 메서드
+    private void updateCurrentAmount(Goal goal) {
+        GoalUpdateParam updateParam = GoalUpdateParam.builder()
+                .goalId(goal.getGoalId())
+                .currentAmount(goal.getCurrentAmount())
+                .build();
+
+        goalMapper.updateCurrentAmount(updateParam);
+    }
+
+
+
 }

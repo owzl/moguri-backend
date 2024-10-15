@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.jdbc.Null;
 import org.moguri.accountbook.domain.AccountBook;
-import org.moguri.accountbook.dto.AccountBooksResponse;
 import org.moguri.accountbook.param.AccountBookCreateParam;
 import org.moguri.accountbook.param.AccountBookUpdateParam;
 import org.moguri.accountbook.service.AccountBookService;
@@ -15,7 +13,9 @@ import org.moguri.common.response.ApiResponse;
 import org.moguri.common.response.MoguriPage;
 import org.moguri.common.response.PageRequest;
 import org.moguri.common.validator.PageLimitSizeValidator;
-import org.springframework.http.ResponseEntity;
+import org.moguri.security.account.domain.CustomUser;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -29,41 +29,28 @@ public class AccountBookController {
 
     private final AccountBookService service;
 
-    // 수입/지출 내역 리스트 조회
-    @GetMapping("")
-    public ResponseEntity<ApiResponse<AccountBooksResponse>> getAccountBooks(AccountBookGetRequest request) {
-        // 페이징 파라미터 검증
+    /* 수입/지출 내역 리스트 조회 */
+    @GetMapping("/list/{memberId}")
+    public ApiResponse<?> getAccountBooks(AccountBookGetRequest request, @PathVariable long memberId) {
         PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
-
-        // 페이징 요청 생성
         PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
 
-        // 거래 내역 조회
-        List<AccountBook> accountBooks = service.getAccountBooks(pageRequest, request.getMemberId());
+        List<AccountBook> accountBooks = service.getAccountBooks(pageRequest, memberId);
+        int totalCount = accountBooks.size();
 
-        // 거래 내역 총 개수 조회
-        int totalCount = service.getTotalAccountBooksCount(request.getMemberId());
-
-        // 응답 객체 생성
-        AccountBooksResponse response = AccountBooksResponse.builder()
-                .accountBooks(accountBooks)
-                .totalCount(totalCount)
-                .build();
-
-        // 200 OK 응답 반환
-        return ResponseEntity.ok(ApiResponse.of(response));
+        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount,
+                accountBooks.stream().map(AccountBookController.AccountBookItem::of).toList()));
     }
 
 
-
-    // 수입/지출 개별 내역 조회
+    /* 수입/지출 개별 내역 조회 */
     @GetMapping("/{accountBookId}")
-    public ApiResponse<?> getAccountBook(@PathVariable long accountBookId, @RequestParam long memberId) {
-        AccountBook accountBook = service.getAccountBook(accountBookId, memberId);
+    public ApiResponse<?> getAccountBook(@PathVariable long accountBookId) {
+        AccountBook accountBook = service.getAccountBook(accountBookId);
         return ApiResponse.of(AccountBookItem.of(accountBook));
     }
 
-    // 수입/지출 내역 등록
+    /* 수입/지출 내역 등록 */
     @PostMapping("")
     public ApiResponse<?> create(@RequestBody AccountBookCreateRequest request) {
         AccountBookCreateParam param = request.convert();
@@ -71,28 +58,28 @@ public class AccountBookController {
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
-    // 수입/지출 내역 수정
+    /* 수입/지출 내역 수정 */
     @PatchMapping("/{accountBookId}")
-    public ApiResponse<?> update(@PathVariable long accountBookId, @RequestBody AccountBookUpdateRequest request, @RequestParam long memberId) {
+    public ApiResponse<?> update(@RequestBody AccountBookUpdateRequest request) {
         AccountBookUpdateParam param = request.convert();
-        param.setAccountBookId(accountBookId);
-        service.updateAccountBook(param, memberId);
+        service.updateAccountBook(param);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
-    // 수입/지출 내역 삭제
+    /* 수입/지출 내역 삭제 */
     @DeleteMapping("/{accountBookId}")
-    public ApiResponse<?> delete(@PathVariable long accountBookId, @RequestParam long memberId) {
-        service.deleteAccountBook(accountBookId, memberId);
+    public ApiResponse<?> delete(@PathVariable long accountBookId) {
+        service.deleteAccountBook(accountBookId);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
-    /* 페이징 정보 */
+
+    /* 페이징 */
     @Data
     public static class AccountBookGetRequest {
         private int page = 0; // 현재 페이지 번호
         private int limit = 30; // 페이지당 항목 수
-        private long memberId;
+
     }
 
     /* 내부 DTO 클래스 */
@@ -122,6 +109,7 @@ public class AccountBookController {
         }
     }
 
+    /* Create */
     @Data
     public static class AccountBookCreateRequest {
         private long memberId;
@@ -145,6 +133,7 @@ public class AccountBookController {
         }
     }
 
+    /* Update */
     @Data
     public static class AccountBookUpdateRequest {
         private long accountBookId;

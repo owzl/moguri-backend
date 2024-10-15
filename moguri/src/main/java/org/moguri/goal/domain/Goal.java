@@ -18,9 +18,12 @@ public class Goal {
     private String goalName;
     private BigDecimal goalAmount;
     private BigDecimal currentAmount;
+    private BigDecimal targetPercent;
     private Date createdAt;
     private Date updatedAt;
     private Date startDate;
     private Date endDate;
     private String goalCategory;
+    private BigDecimal rewardAmount;
+    private long questId; // questId 필드 추가
 }
