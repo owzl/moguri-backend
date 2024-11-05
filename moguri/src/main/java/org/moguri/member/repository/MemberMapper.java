@@ -1,20 +1,29 @@
 package org.moguri.member.repository;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.moguri.common.response.PageRequest;
 import org.moguri.member.domain.Member;
-import org.moguri.security.account.domain.AuthVO;
-import org.moguri.security.account.domain.MemberVO;
-import org.springframework.data.domain.PageRequest;
+import org.moguri.member.param.MemberUpdateParam;
 
 import java.util.List;
-import java.util.Optional;
 
 @Mapper
 public interface MemberMapper {
 
-    int save(Member member); // 회원 정보 추가
-
-    Optional<Member> findById(long id);
-
     List<Member> findAll(PageRequest pageRequest);
+
+    int getTotalCount();
+
+    int save(Member member);
+
+    Member findById(long id);
+
+    void update(MemberUpdateParam param);
+
+    void delete(long id);
+
+    void updateCottonCandy(@Param("id") long id, @Param("cottonCandy") int cottonCandy);
+
+    int getCottonCandy(@Param("id") long id);
 }

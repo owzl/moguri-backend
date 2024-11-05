@@ -17,16 +17,22 @@ ext {
     springSecurityVersion = '5.8.13'
 }
 
-
-sourceCompatibility = '1.17'
-targetCompatibility = '1.17'
+sourceCompatibility = '17'
+targetCompatibility = '17'
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
 dependencies {
-    // 스프링
+    //RestTemplate 사용에 필요
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
+    // Spring Data Redis
+    implementation 'org.springframework.data:spring-data-redis:2.7.2' // 최신 버전의 Spring Data Redis
+    implementation 'io.lettuce:lettuce-core:6.4.0.RELEASE' // 최신 버전의 Lettuce
+
+    // Spring
     implementation("org.springframework:spring-context:${springVersion}")
             { exclude group: 'commons-logging', module: 'commons-logging' }
     implementation "org.springframework:spring-webmvc:${springVersion}"
@@ -37,8 +43,8 @@ dependencies {
     runtimeOnly 'org.aspectj:aspectjrt:1.9.20'
     runtimeOnly 'org.aspectj:aspectjweaver:1.9.20'
 
-    // JSP, SERVLET, JSTL
-    implementation('javax.servlet:javax.servlet-api:4.0.1')
+    // JSP, Servlet, JSTL
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
     compileOnly 'javax.servlet.jsp:jsp-api:2.1'
     implementation 'javax.servlet:jstl:1.2'
 
@@ -46,19 +52,19 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:2.0.9'
     runtimeOnly 'org.slf4j:jcl-over-slf4j:2.0.9'
     runtimeOnly 'org.slf4j:slf4j-log4j12:2.0.9'
-    implementation 'log4j:log4j:1.2.17'
+    implementation 'log4j:log4j:1.2.17'  // Verify if needed
 
-    // xml내 한글 처리
+    // XML
     implementation 'xerces:xercesImpl:2.12.2'
 
     // Lombok
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
-    // Jackson - Json 처리
+    // Jackson
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
 
-    // db
+    // Database
     implementation 'com.mysql:mysql-connector-j:8.1.0'
     implementation 'com.zaxxer:HikariCP:2.7.4'
 
@@ -72,18 +78,20 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-api:2.0.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.0.1'
 
-    // 보안
+    // Security
     implementation("org.springframework.security:spring-security-web:${springSecurityVersion}")
     implementation("org.springframework.security:spring-security-config:${springSecurityVersion}")
     implementation("org.springframework.security:spring-security-core:${springSecurityVersion}")
     implementation("org.springframework.security:spring-security-taglibs:${springSecurityVersion}")
 
-    //jwt
+    // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
     implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+    // JSON 처리 라이브러리 추가
+    implementation 'org.json:json:20210307'
 
-    // 테스트
+    // Testing
     testImplementation "org.springframework:spring-test:${springVersion}"
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"

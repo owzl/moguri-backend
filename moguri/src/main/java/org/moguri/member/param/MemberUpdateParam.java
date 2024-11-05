@@ -10,10 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 public class MemberUpdateParam {
-
+    private Long id; // 업데이트할 멤버의 ID
+    private String email; // 추가
     private String password;
-
-    private String name;
-
     private String nickName;
+    private int cottonCandy;
 }

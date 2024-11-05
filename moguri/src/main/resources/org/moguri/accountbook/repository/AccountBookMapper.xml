@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.moguri.accountbook.repository.AccountBookMapper">
+
+    <resultMap id="accountBookMap" type="AccountBook">
+        <id column="accountbook_id" property="accountBookId"/> <!-- 기본 키 -->
+        <result column="member_id" property="memberId"/> <!-- 외래키 -->
+        <result column="transaction_date" property="transactionDate"/> <!-- 거래 날짜 -->
+        <result column="category" property="category"/> <!-- 카테고리 -->
+        <result column="amount" property="amount"/> <!-- 금액 -->
+        <result column="type" property="type"/> <!-- 거래 유형 -->
+        <result column="description" property="description"/> <!-- 설명 -->
+        <result column="payment_method" property="paymentMethod"/> <!-- 결제 방법 -->
+        <result column="created_at" property="createdAt"/> <!-- 생성 날짜 -->
+        <result column="updated_at" property="updatedAt"/> <!-- 업데이트 날짜 -->
+        <result column="deleted_at" property="deletedAt"/> <!-- 삭제 날짜 -->
+    </resultMap>
+
+    <!-- === 수입/지출 관리 === -->
+
+    <!-- 수입/지출 내역 리스트 조회 - select -->
+    <select id="getAccountBooks" parameterType="org.moguri.common.response.PageRequest" resultMap="accountBookMap">
+        <![CDATA[
+        SELECT *
+        FROM AccountBook
+        WHERE member_id = #{memberId}
+        ORDER BY accountbook_id DESC
+            LIMIT #{pageRequest.limit} OFFSET #{pageRequest.page}
+        ]]>
+    </select>
+
+    <!-- 수입/지출 내역 개수 조회 - select -->
+    <select id="getAccountBooksCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM AccountBook
+        WHERE member_id = #{memberId}
+    </select>
+
+
+    <!-- 수입/지출 개별 내역 조회 -->
+    <select id="getAccountBook" resultType="AccountBook">
+        SELECT *
+        FROM AccountBook
+        WHERE accountbook_id = #{accountBookId}
+    </select>
+
+    <!-- 수입/지출 내역 작성 - insert -->
+    <insert id="createAccountBook" parameterType="AccountBook">
+        INSERT INTO AccountBook(
+                                 member_id
+                               , transaction_date
+                               , category
+                               , amount
+                               , type
+                               , description
+                               , payment_method
+                               , created_at
+                                )
+        VALUES (
+                #{memberId}
+              , #{transactionDate}
+              , #{category}
+              , #{amount}
+              , #{type}
+              , #{description}
+              , #{paymentMethod}
+              , now()
+               )
+        <selectKey resultType="Long" keyProperty="accountBookId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <!-- 수입/지출 내역 수정 - update -->
+    <update id="updateAccountBook" parameterType="AccountBook">
+        UPDATE AccountBook
+        SET member_id = #{memberId},
+            transaction_date = #{transactionDate},
+            category         = #{category},
+            amount           = #{amount},
+            type             = #{type},
+            description      = #{description},
+            payment_method   = #{paymentMethod},
+            updated_at       = now()
+        WHERE accountbook_id = #{accountBookId}
+    </update>
+
+    <!-- 수입/지출 내역 삭제 - delete -->
+    <delete id="deleteAccountBook">
+        DELETE
+        FROM AccountBook
+        WHERE accountbook_id = #{accountBookId}
+    </delete>
+
+    <!-- === 목표와 연동 === -->
+    <!-- 지출 목표 - currentAmount 구하기 -->
+    <select id="getCurrentAmountForCategory" parameterType="map" resultType="java.math.BigDecimal">
+        SELECT SUM(amount)
+        FROM AccountBook
+        WHERE category = #{category}
+          AND transaction_date BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+
+    <!-- 저축 목표 - currentAmount 구하기 -->
+    <select id="getCurrentAmountForDescription" parameterType="String" resultType="java.math.BigDecimal">
+        SELECT SUM(amount)
+        FROM AccountBook
+        WHERE description = #{description}
+          AND transaction_date BETWEEN DATE_FORMAT(NOW() ,'%Y-%m-01') AND LAST_DAY(NOW())
+    </select>
+
+    <!-- goalAmount 구하기 -->
+    <select id="getGoalAmountForCategory" parameterType="long" resultType="java.math.BigDecimal">
+        SELECT SUM(a.AMOUNT) * (1 - (q.TARGET_PERCENT / 100)) AS goal_amount
+        FROM AccountBook a
+                JOIN GoalQuest q ON q.QUEST_ID = #{questId}
+                JOIN Category c ON c.CATEGORY_ID = q.CATEGORY_ID
+        WHERE a.CATEGORY = c.CATEGORY_NAME
+         AND a.TRANSACTION_DATE BETWEEN DATE_FORMAT(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH), '%Y-%m-01')
+           AND LAST_DAY(DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
+        GROUP BY a.CATEGORY;
+    </select>
+
+
+</mapper>

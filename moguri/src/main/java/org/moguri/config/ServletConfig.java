@@ -1,9 +1,6 @@
 package org.moguri.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.multipart.MultipartResolver;
-import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
@@ -12,8 +9,13 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan(basePackages = {
         "org.moguri.*",
         "org.moguri.exception",
-        "org.moguri.board.controller",
         "org.moguri.member.controller",
+        "org.moguri.event.attendance.controller",
+        "org.moguri.event.quiz.controller",
+        "org.moguri.event.roulette.controller",
+        "org.moguri.accountbook.controller",
+        "org.moguri.stock.controller",
+        "org.moguri.common.config"
 }) // Spring MVC용 컴포넌트 등록을 위한 스캔 패키지
 public class ServletConfig implements WebMvcConfigurer {
 
@@ -42,12 +44,5 @@ public class ServletConfig implements WebMvcConfigurer {
         bean.setPrefix("/WEB-INF/views/");
         bean.setSuffix(".jsp");
         registry.viewResolver(bean);
-    }
-
-    // Servlet ${WEB_XML_VERSION} 파일 업로드 사용시 - MultipartResolver 빈 등록
-    @Bean
-    public MultipartResolver multipartResolver() {
-        StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
-        return resolver;
     }
 }

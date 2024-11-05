@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.event.attendance.repository.AttendanceMapper">
+
+    <resultMap id="attendanceMap" type="Attendance">
+        <id column="attendance_id" property="attendanceId"/>
+        <result column="member_id" property="memberId"/>
+        <result column="attendance_date" property="attendanceDate"/>
+    </resultMap>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM Attendance
+    </select>
+
+    <select id="getAttendances"
+            parameterType="org.moguri.common.response.PageRequest"
+            resultType="org.moguri.event.attendance.domain.Attendance">
+        SELECT *
+        FROM Attendance
+                 LIMIT #{limit}
+        OFFSET #{offset}
+    </select>
+
+    <select id="getAttendance"
+            resultType="org.moguri.event.attendance.domain.Attendance">
+        SELECT *
+        FROM Attendance
+        WHERE attendance_id = #{attendanceId}
+
+    </select>
+
+    <select id="getMemberAttendances"
+            resultType="org.moguri.event.attendance.domain.Attendance">
+        SELECT *
+        FROM Attendance
+        WHERE member_id = #{memberId}
+    </select>
+
+    <insert id="createAttendance" parameterType="Attendance">
+        INSERT INTO Attendance (member_id, attendance_date)
+        VALUES (#{memberId}, NOW())
+
+        <selectKey resultType="Long" keyProperty="attendanceId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <select id="getMonthCount" resultType="int">
+        SELECT COUNT(*) AS attendance_count
+        FROM Attendance
+        WHERE member_id = #{memberId}
+            AND MONTH(attendance_date) = MONTH(CURDATE())
+          AND YEAR(attendance_date) = YEAR(CURDATE())
+    </select>
+
+    <select id="userReceivedCheck" resultType="boolean">
+        SELECT CASE
+                   WHEN COUNT(*) > 0 THEN TRUE
+                   ELSE FALSE
+                   END AS user_received_check
+        FROM RewardReceivedDate
+        WHERE MEMBER_ID = #{memberId}
+          AND RECEIVED_TYPE = #{receivedType}
+          AND MONTH(RECEIVED_DATE) = MONTH(CURDATE())
+          AND YEAR(RECEIVED_DATE) = YEAR(CURDATE())
+    </select>
+
+    <insert id="createAttendanceReceived" parameterType="org.moguri.event.attendance.domain.AttendanceReceived">
+        INSERT INTO RewardReceivedDate (MEMBER_ID, RECEIVED_TYPE, RECEIVED_DATE)
+        VALUES (#{memberId}, #{receivedType}, NOW())
+
+        <selectKey resultType="Long" keyProperty="receivedId" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+</mapper>

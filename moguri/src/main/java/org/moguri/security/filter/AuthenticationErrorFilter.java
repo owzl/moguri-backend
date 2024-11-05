@@ -14,7 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+// jwt 토큰 인증 중 발생하는 오류 처리
 @Component
 public class AuthenticationErrorFilter extends OncePerRequestFilter {
     @Override

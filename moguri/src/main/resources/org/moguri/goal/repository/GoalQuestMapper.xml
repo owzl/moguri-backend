@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.goal.repository.GoalQuestMapper">
+
+    <resultMap id="goalQuestMap" type="GoalQuest">
+        <id column="quest_id" property="questId"/>
+        <result column="quest_title" property="questTitle"/>
+        <result column="quest_description" property="questDescription"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="category_name" property="categoryName"/> <!-- 카테고리 이름 추가 -->
+        <result column="target_percent" property="targetPercent"/>
+        <result column="current_amount" property="currentAmount"/>
+        <result column="quest_days" property="questDays"/>
+        <result column="reward_amount" property="rewardAmount"/>
+    </resultMap>
+
+    <!-- 목표 퀘스트 리스트 조회 -->
+    <select id="getGoalQuests" parameterType="org.moguri.common.response.PageRequest" resultType="GoalQuest">
+        <![CDATA[
+        SELECT
+            GQ.QUEST_ID,
+            GQ.QUEST_TITLE,
+            GQ.QUEST_DESCRIPTION,
+            GQ.CATEGORY_ID,
+            C.CATEGORY_NAME,  -- 카테고리 이름 추가
+            GQ.TARGET_PERCENT,
+            GQ.CURRENT_AMOUNT,
+            GQ.QUEST_DAYS,
+            GQ.REWARD_AMOUNT
+        FROM GoalQuest GQ
+                 JOIN Category C ON GQ.CATEGORY_ID = C.CATEGORY_ID
+        ORDER BY GQ.QUEST_ID DESC
+            LIMIT #{limit} OFFSET #{offset}
+        ]]>
+    </select>
+
+    <!-- 목표 퀘스트 개수 - 페이징 -->
+    <select id="getTotalGoalQuestsCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM GoalQuest
+    </select>
+
+    <select id="findQuestByCategory" parameterType="int" resultType="GoalQuest">
+        SELECT *
+        FROM GoalQuest
+        WHERE category_id = #{categoryId}
+    </select>
+
+
+</mapper>

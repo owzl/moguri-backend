@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.moguri.moguri.repository.MoguriMapper">
+
+    <!-- findAllMoguri -->
+    <select id="findAllMoguri" resultType="org.moguri.moguri.domain.Moguri">
+        SELECT
+            moguri_id AS moguriId,
+            moguri_name AS moguriName,
+            moguri_price AS moguriPrice,
+            file_path AS filePath
+        FROM
+            MoguriStore
+                LIMIT #{pageRequest.limit} OFFSET #{pageRequest.page}
+    </select>
+
+    <!-- findAllUserMoguri -->
+    <select id="findAllUserMoguri" resultType="org.moguri.moguri.domain.Moguri">
+        SELECT
+            ms.moguri_id AS moguriId,
+            ms.moguri_name AS moguriName,
+            ms.moguri_price AS moguriPrice,
+            ms.file_path AS filePath
+        FROM
+            MoguriStore ms
+                JOIN
+            MyMoguri mm ON ms.moguri_id = mm.moguri_id
+        WHERE
+            mm.member_id = #{memberId}
+            LIMIT #{pageRequest.limit}, #{pageRequest.page}
+    </select>
+
+    <!-- purchaseMoguri -->
+    <insert id="purchaseMoguri">
+        INSERT INTO MyMoguri (moguri_id, member_id, add_date)
+        VALUES (#{moguriId}, #{memberId}, now())
+    </insert>
+
+    <!-- findById -->
+    <select id="findById" resultType="org.moguri.moguri.domain.Moguri">
+        SELECT
+            moguri_id AS moguriId,
+            moguri_name AS moguriName,
+            moguri_price AS moguriPrice,
+            file_path AS filePath
+        FROM
+            MoguriStore
+        WHERE
+            moguri_id = #{moguriId}
+    </select>
+</mapper>

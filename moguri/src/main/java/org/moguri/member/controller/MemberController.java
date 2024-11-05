@@ -4,13 +4,15 @@ import lombok.RequiredArgsConstructor;
 
 import org.moguri.common.enums.ReturnCode;
 import org.moguri.common.response.ApiResponse;
-
 import lombok.Data;
-
+import org.moguri.common.response.MoguriPage;
+import org.moguri.common.response.PageRequest;
+import org.moguri.common.validator.PageLimitSizeValidator;
 import org.moguri.member.domain.Member;
 import org.moguri.member.param.MemberCreateParam;
 import org.moguri.member.param.MemberUpdateParam;
 import org.moguri.member.service.MemberService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/members")
@@ -29,21 +31,23 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    /**
-     * 페이징 처리 고민중 추후 구현
-     */
-//    @GetMapping
-//    public ApiResponse<?> getMembers(MemberGetRequest request) {
-//        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
-//        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
-//
-//        Stream<MemberItem> members = memberService.getMembers(pageRequest).stream().map(MemberItem::of);
-//        members = members;
-//        return ApiResponse.of(MoguriPage.of(members));
-//    }
+    private final PasswordEncoder passwordEncoder;
+
+    @GetMapping
+    public ApiResponse<?> getMembers(MemberGetRequest request) {
+        PageLimitSizeValidator.validateSize(request.getPage(), request.getLimit(), 100);
+        PageRequest pageRequest = PageRequest.of(request.getPage(), request.getLimit());
+
+        List<Member> members = memberService.getMembers(pageRequest);
+        int totalCount = memberService.getTotalCount();
+
+        return ApiResponse.of(MoguriPage.of(pageRequest, totalCount,
+                members.stream().map(MemberItem::of).toList()));
+    }
+
     @PostMapping
     public ApiResponse<?> create(@RequestBody MemberCreateRequest request) {
-        MemberCreateParam param = request.convert();
+        MemberCreateParam param = request.convert(passwordEncoder);
         memberService.save(param);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
@@ -54,34 +58,42 @@ public class MemberController {
         return ApiResponse.of(MemberItem.of(member));
     }
 
-    @DeleteMapping("/{id}")
-    public ApiResponse<?> delete(@PathVariable("id") Long id) {
-        //memberService.remove(loginMember, id);
-        return ApiResponse.of(ReturnCode.SUCCESS);
-    }
-
     @PatchMapping("/{id}")
     public ApiResponse<?> update(@PathVariable("id") Long id, @RequestBody MemberUpdateRequest request) {
         MemberUpdateParam param = request.convert();
-        //memberService.update(loginMember, id, param);
+        memberService.update(param);
         return ApiResponse.of(ReturnCode.SUCCESS);
     }
 
+    @DeleteMapping("/{id}")
+    public ApiResponse<?> delete(@PathVariable("id") Long id) {
+        memberService.remove(id);
+        return ApiResponse.of(ReturnCode.SUCCESS);
+    }
+
+    @PatchMapping("/{id}/cotton-candy")
+    public ApiResponse<?> updateCottonCandy(@PathVariable("id") Long id, @RequestBody CottonCandyUpdateRequest request) {
+        memberService.updateCottonCandy(id, request.getCottonCandy());
+        return ApiResponse.of(ReturnCode.SUCCESS);
+    }
+
+    @GetMapping("/{id}/cotton-candy")
+    public ApiResponse<?> getCottonCandy(@PathVariable("id") Long id) {
+        int cottonCandy = memberService.getCottonCandy(id);
+        return ApiResponse.of(cottonCandy);
+    }
+
+
     @Data
     private static class MemberGetRequest {
-
         private int page = 0;
-        private int limit = 30;
-        //default 값
+        private int limit = 30; // default 값
     }
 
     @Data
     private static class MemberItem {
-
         private String email; // id
-
         private String password;
-
         private String nickName;
 
         private static MemberItem of(Member member) {
@@ -95,36 +107,35 @@ public class MemberController {
 
     @Data
     private static class MemberCreateRequest {
-
         private String email; // id
-
         private String password;
-
         private String nickName;
 
-        public MemberCreateParam convert() {
-            MemberCreateParam param = MemberCreateParam.builder()
+        public MemberCreateParam convert(PasswordEncoder passwordEncoder) {
+            return MemberCreateParam.builder()
                     .email(email)
-                    .password(password)
+                    .password(passwordEncoder.encode(password))
                     .nickName(nickName)
                     .build();
-            return param;
         }
     }
 
     @Data
     private static class MemberUpdateRequest {
-
         private String password;
-
         private String nickName;
 
         public MemberUpdateParam convert() {
-            MemberUpdateParam param = MemberUpdateParam.builder()
+            return MemberUpdateParam.builder()
                     .password(password)
                     .nickName(nickName)
                     .build();
-            return param;
         }
+    }
+
+    // CottonCandyUpdateRequest 데이터 클래스 추가
+    @Data
+    private static class CottonCandyUpdateRequest {
+        private int cottonCandy; // 업데이트할 코튼 캔디 수량
     }
 }

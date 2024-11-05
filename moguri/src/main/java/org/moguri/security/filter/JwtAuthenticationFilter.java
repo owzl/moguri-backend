@@ -16,7 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+// jwt토큰을 통해 인증 처리
 @Component
 @Slf4j
 @RequiredArgsConstructor

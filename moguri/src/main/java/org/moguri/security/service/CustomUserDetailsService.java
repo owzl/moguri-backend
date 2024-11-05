@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Log4j
-//@Component
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -19,11 +18,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserDetailsMapper mapper;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        MemberVO vo = mapper.get(username);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        MemberVO vo = mapper.get(email); // email로 변경
         if (vo == null) {
-            throw new UsernameNotFoundException(username + "은 없는 id입니다.");
+            throw new UsernameNotFoundException(email + "은 없는 이메일입니다."); // 메시지도 변경
         }
-        return new CustomUser(vo); // SecurityContext == context : 맥락,  상황 상태
+        return new CustomUser(vo);
     }
 }
