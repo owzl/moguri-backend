@@ -15,7 +15,8 @@
 | 간단한 테스트로 소비유형을 파악할 수 있습니다 | 퀘스트와 목표로 리워드를 얻을 수 있습니다 | 출석체크,룰렛,퀴즈 등으로 리워드를 얻을 수 있습니다 | 얻은 리워드로 모의투자를 할 수 있습니다 | 모은 리워드로 귀여운 모구리를 구매할 수 있습니다 |
 <br>
 🔗 **모구리 소개 영상** : https://drive.google.com/file/d/11wIC-s_-lXM77UwtoA57e4QxB53oxZWk/view?usp=sharing <br>
-🔗 **시연 영상** : https://drive.google.com/file/d/1QCEqptMmiOGiIcwW3KkjNOdsaHrd-dj1/view?usp=sharing
+🔗 **시연 영상** : https://drive.google.com/file/d/1QCEqptMmiOGiIcwW3KkjNOdsaHrd-dj1/view?usp=sharing <br>
+🔗 **모구리 FE GITHUB** : https://github.com/s-eun20/Moguri
 
 ### 📷 세부 기능
 
