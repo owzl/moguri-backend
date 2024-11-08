@@ -40,7 +40,7 @@
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/6afd0556-30e9-475b-a3e2-75bf09020e2e">
 
 
-- 소비유형 검사 페이지입니다. 비회원도 가능하게 하여 사용자 유치를 할 수 있게 합니다.
+- 소비유형 검사 페이지입니다. 비회원도 가능하게 하여 사용자 유치를 할 수 있게 합니다.
 
 </div>
 </details>
