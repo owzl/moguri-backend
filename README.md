@@ -40,7 +40,7 @@
 <img width="800" alt="image" src="https://github.com/user-attachments/assets/6afd0556-30e9-475b-a3e2-75bf09020e2e">
 
 
-- 소비유형 검사 페이지입니다. 비회원도 가능하게 하여 사용자 유치를 할 수 있게 합니다.
+- 소비유형 검사 페이지입니다. 비회원도 가능하게 하여 사용자 유치를 할 수 있게 합니다.
 
 </div>
 </details>
@@ -154,10 +154,10 @@
 
 ## 🧑‍💻 Contributor
 
-| [오상민<br>(BE Leader)](https://github.com/AsthuX) | [이혁](https://github.com/) |
-| [정유리<br>(BE Leader)](https://github.com/owzl) | :---: | :---: |
-| <img src="https://github.com/user-attachments/assets/fe5cdfa3-8556-42c5-a851-a4e830c13137" width="140px" alt="오상민"/> | | <img src="https://github.com/owzl/owzl/blob/17d0f0d9fc4abbe10e6e5d3898c879404133c8e4/mimoticon_yuri.png" width="140px" alt="정유리" |
-| - 모의투자 백엔드 구현<br>- 주식정보 Redis 캐싱 구현<br>- 모의투자 랭킹 백엔드 구현<br>- 랭킹 서비스 스케줄러 구현<br>- 모구리 상점 백엔드 구현<br>- 공통 응답 포맷, 커스텀 에러 구현 | - 로그인 및 회원가입 기능0<br>| - 가계부 백엔드 구현<br> - 퀘스트 백엔드 구현<br> - 모구리상점 프론트엔드 구현|
+| [오상민<br>(BE Leader)](https://github.com/AsthuX) | [이혁](https://github.com/) | [정유리](https://github.com/owzl) |
+| :---: | :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/fe5cdfa3-8556-42c5-a851-a4e830c13137" width="140px" alt="오상민"/> | | <img src="https://github.com/owzl/owzl/blob/17d0f0d9fc4abbe10e6e5d3898c879404133c8e4/mimoticon_yuri.png" width="140px" alt="정유리"/> |
+| - 모의투자 백엔드 구현<br>- 주식정보 Redis 캐싱 구현<br>- 모의투자 랭킹 백엔드 구현<br>- 랭킹 서비스 스케줄러 구현<br>- 모구리 상점 백엔드 구현<br>- 공통 응답 포맷, 커스텀 에러 구현 | - 로그인 및 회원가입 기능0<br>| - 가계부 백엔드 구현<br> - 퀘스트 백엔드 구현<br> - 모구리 상점 프론트엔드 구현|
 
 
 ### 📓 Document
