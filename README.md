@@ -150,10 +150,10 @@
 
 ## 🧑‍💻 Contributor
 
-| [오상민<br>(BE Leader)](https://github.com/AsthuX) | [이혁](https://github.com/) | [정유리]((https://github.com/owzl) |
+| [오상민<br>(BE Leader)](https://github.com/AsthuX) | [이혁](https://github.com/) | [정유리](https://github.com/owzl) |
 | :---: | :---: | :---: |
-| <img src="https://github.com/user-attachments/assets/fe5cdfa3-8556-42c5-a851-a4e830c13137" width="140px" alt="오상민"/> | |
-| - 모의투자 백엔드 구현<br>- 주식정보 Redis 캐싱 구현<br>- 모의투자 랭킹 백엔드 구현<br>- 랭킹 서비스 스케줄러 구현<br>- 모구리 상점 백엔드 구현<br>- 공통 응답 포맷, 커스텀 에러 구현 | - 로그인 및 회원가입 기능0<br>|
+| <img src="https://github.com/user-attachments/assets/fe5cdfa3-8556-42c5-a851-a4e830c13137" width="140px" alt="오상민"/> | | <img src="mimoticon_yuri.png" width="140px" alt="정유리"/> |
+| - 모의투자 백엔드 구현<br>- 주식정보 Redis 캐싱 구현<br>- 모의투자 랭킹 백엔드 구현<br>- 랭킹 서비스 스케줄러 구현<br>- 모구리 상점 백엔드 구현<br>- 공통 응답 포맷, 커스텀 에러 구현 | - 로그인 및 회원가입 기능0<br>| - 가계부 백엔드 구현<br> - 목표 백엔드 구현 |
 
 ### 📓 Document
 
